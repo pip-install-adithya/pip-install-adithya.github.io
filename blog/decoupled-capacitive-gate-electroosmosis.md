@@ -1,78 +1,57 @@
 ---
 layout: default
 title: "Electro-osmosis Beyond the Single RC Pole"
-description: "How decoupling surface-charge control from tangential-field generation enables phase-controlled electro-osmotic flow in high-conductivity electrolytes."
+description: "Why conventional AC electro-osmosis struggles in physiological electrolytes, and what changes when surface-charge control is separated from propulsion."
 ---
 
 [Home](../) · [Fluids](../fluid-dynamics) · [Publications](../publications) · [Notes](./)
 
 # Electro-osmosis Beyond the Single RC Pole
 
-## Phase-Controlled Flow in High-Conductivity Electrolytes
+### Phase-controlled flow in high-conductivity electrolytes
 
-In September 2026, our work
+In September 2026, our paper
 
 **“Decoupled capacitive-gate electro-osmosis: Phase-controlled bidirectional flow in high-conductivity electrolytes via a modified Poisson–Boltzmann–Stokes framework”**
 
-was published in the **Journal of Applied Physics**, Volume 140, Article 124703.
+was published in the **Journal of Applied Physics**.
 
-**Authors:** Shriram Srihari and Adithya Lakshminarayanan  
-**DOI:** `10.1063/5.0345688`
+**Shriram Srihari and Adithya Lakshminarayanan**  
+*Journal of Applied Physics* **140**, 124703 (2026)  
+DOI: `10.1063/5.0345688`
 
-This post explains the physical problem behind the paper, why conventional AC electro-osmosis becomes problematic in physiological electrolytes, the modelling decisions we made, and what the results actually mean.
+This post is less a summary of the paper than an attempt to explain the physical problem that led to it.
 
----
+The starting point is deceptively simple: if you want to move fluid through a microscopic channel, why use a mechanical pump at all?
 
-# 1. The Problem We Started With
+At the microscale, moving parts are expensive. They introduce fabrication complexity, wear, sealing problems, extra volume, and usually an awkward mismatch between the size of the actuator and the size of the channel. Electrokinetic propulsion offers a much cleaner possibility: use an electric field to act on the ions already present in the fluid, and let their interaction with the liquid generate motion.
 
-Suppose we want to move fluid through a microscopic channel.
+That works very well in some electrolytes.
 
-At macroscopic scales, the obvious solution is some kind of mechanical pump.
+Physiological fluids are where things get difficult.
 
-At micrometre scales, that becomes much less attractive.
-
-Mechanical components introduce:
-
-- moving parts,
-- fabrication complexity,
-- wear,
-- sealing problems,
-- additional volume,
-- difficult miniaturisation.
-
-Electrokinetic transport offers a different approach:
-
-> Use electric fields to move the ions already present in the fluid, and let their interaction with the liquid generate flow.
-
-This is particularly appealing for microfluidics and potentially for small biomedical devices.
-
-But physiological liquids create an unusually difficult operating environment.
-
-Cerebrospinal fluid, for example, has an electrical conductivity of approximately
+Cerebrospinal fluid, for example, has conductivity around
 
 $$
 \sigma \approx 1.68\ \mathrm{S\,m^{-1}}.
 $$
 
-That is **very conductive** compared with many dilute electrolytes used in classical electrokinetic experiments.
+That is high enough that several assumptions behind conventional AC electro-osmosis begin to become uncomfortable at exactly the voltages needed to obtain useful flow.
 
-The central question behind our work was therefore:
+The question we were interested in was therefore not simply whether electro-osmosis can move CSF. It was more specific:
 
-> **Can useful, reversible electro-osmotic transport be generated in a highly conductive physiological electrolyte without relying on large voltages that drive damaging electrochemical reactions?**
+> Can one obtain useful, reversible electro-osmotic transport in a highly conductive physiological electrolyte without pushing the electrode-electrolyte interface into an electrochemically destructive regime?
 
-To understand why that is difficult, we first need to understand the electric double layer.
+The answer turns out to depend on separating two physical jobs that conventional ACEO usually assigns to the same electrode.
 
 ---
 
-# 2. The Electric Double Layer
+## The thin charged layer that moves the fluid
 
-When a solid surface comes into contact with an electrolyte, the interface generally becomes electrically charged.
+Electro-osmosis begins with a surface in contact with an electrolyte.
 
-Counterions in the liquid are attracted toward the surface while similarly charged ions are repelled.
+Once the interface acquires charge, oppositely charged ions in the liquid are attracted toward it. The resulting charge distribution is not confined to a perfectly sharp sheet. Instead, one obtains an **electric double layer**, or EDL: a compact interfacial region near the wall and a diffuse ionic region extending into the liquid.
 
-This creates an **electric double layer**, or EDL.
-
-<!-- EXTERNAL IMAGE 1: OPEN-LICENSE PRIMER -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/edl-primer.svg' | relative_url }}"
@@ -80,18 +59,12 @@ This creates an **electric double layer**, or EDL.
     style="max-width:720px;width:80%;display:block;margin:auto;"
   >
   <figcaption>
-    Electrical-double-layer structure. Credit: Guillaume Paumier,
+    Schematic of an electrical double layer. Credit: Guillaume Paumier,
     CC BY-SA 3.0, Wikimedia Commons.
   </figcaption>
 </figure>
 
-Very close to the surface lies a compact region of strongly associated charge.
-
-Farther away lies the **diffuse layer**, where thermal motion competes with electrostatic attraction.
-
-The electrostatic potential therefore decays from the wall toward its bulk value.
-
-A useful characteristic length is the **Debye length**
+A useful length scale for this structure is the Debye length,
 
 $$
 \lambda_D
@@ -102,47 +75,25 @@ $$
 }.
 $$
 
-Here:
-
-- $\epsilon$ is fluid permittivity,
-- $k_B$ is Boltzmann's constant,
-- $T$ is temperature,
-- $N_A$ is Avogadro's number,
-- $z_0$ is ionic valence,
-- $e$ is elementary charge,
-- $C_0$ is bulk ion concentration.
-
-For the CSF conditions considered in the paper,
+For the cerebrospinal-fluid conditions in our model,
 
 $$
 \lambda_D \approx 0.834\ \mathrm{nm}.
 $$
 
-That is extraordinarily thin compared with a micrometre-scale channel.
+So the electrically active region near the wall is sub-nanometre in scale, even though the channel itself is several micrometres wide.
 
----
+That disparity of scales is one of the recurring difficulties in electrokinetic modelling.
 
-# 3. How an Electric Double Layer Produces Fluid Motion
-
-Now apply an electric field tangential to the wall.
-
-The net charge inside the EDL experiences an electrical body force.
-
-If $\rho_e$ is the local space-charge density and $\mathbf{E}$ is the electric field,
+Now apply an electric field along the wall. The net charge inside the EDL experiences an electrical body force,
 
 $$
-\mathbf{f}_e
-=
-\rho_e\mathbf{E}.
+\mathbf{f}_e = \rho_e\mathbf{E}.
 $$
 
-The charged fluid near the surface moves under this force.
+The charged fluid near the surface moves, and viscous stresses transmit that motion into the bulk.
 
-Viscosity transfers that momentum into the rest of the fluid.
-
-This produces **electro-osmotic flow**.
-
-For a sufficiently thin EDL, this is often represented by a Helmholtz–Smoluchowski-type slip relation:
+For a thin double layer, the result is often summarized by a Helmholtz–Smoluchowski-type slip relation,
 
 $$
 u_{\mathrm{EO}}
@@ -150,74 +101,41 @@ u_{\mathrm{EO}}
 -\frac{\epsilon\zeta}{\eta}E_t,
 $$
 
-where:
+where $\zeta$ represents the wall electrokinetic potential and $E_t$ is the tangential electric field.
 
-- $\zeta$ is the wall electrokinetic potential,
-- $\eta$ is dynamic viscosity,
-- $E_t$ is the tangential electric field.
-
-The key relationship is therefore roughly
+The most important part is the product:
 
 $$
 \boxed{
-u_{\mathrm{EO}}
-\propto
-\zeta E_t
+u_{\mathrm{EO}} \propto \zeta E_t
 }
 $$
 
-and this simple product becomes extremely important later.
+Electro-osmotic propulsion needs two things:
 
-There are effectively **two things we need**:
+**charge at the wall**, and **a tangential field acting on that charge**.
 
-1. surface charge, represented through $\zeta$;
-2. a tangential electric field, $E_t$.
-
-Conventional ACEO usually couples both of these to the same electrode system.
-
-That is where the problem begins.
+That sounds obvious, but conventional ACEO usually entangles them.
 
 ---
 
-# 4. Why AC Electro-osmosis?
+## Why the usual ACEO picture becomes restrictive
 
-If we simply place electrodes in an electrolyte and apply a sufficiently large DC voltage, electrochemical reactions occur at the electrode surface.
+Alternating-current electro-osmosis avoids some of the problems of simply applying a large DC potential across an electrolyte.
 
-That can produce:
+Under AC forcing, the double layer repeatedly charges and discharges. With an asymmetric electrode geometry, these oscillatory processes can rectify into a non-zero mean flow.
 
-- electrolysis products,
-- local pH changes,
-- bubbles,
-- ionic concentration disturbances,
-- electrode degradation.
+The difficulty is that the EDL does not charge instantaneously.
 
-AC electro-osmosis instead uses alternating fields.
-
-The electrode repeatedly charges and discharges the double layer.
-
-With asymmetric geometry, these oscillatory processes can rectify into a non-zero time-averaged flow.
-
-But the EDL cannot charge infinitely quickly.
-
-It has a characteristic electrical timescale.
-
----
-
-# 5. The RC Bottleneck
-
-A simplified electrode-electrolyte system behaves partly like an RC circuit.
-
-The conducting electrolyte supplies a resistance $R$, while the electric double layer contributes a capacitance $C_{\mathrm{EDL}}$.
-
-The characteristic charging time is
+A useful first approximation is an RC circuit: the conductive electrolyte supplies a resistance and the interface contributes a double-layer capacitance. The characteristic charging time is therefore
 
 $$
 \tau_{\mathrm{RC}}
 =
-RC_{\mathrm{EDL}}.
+RC_{\mathrm{EDL}},
 $$
 
-The corresponding characteristic frequency is
+with characteristic frequency
 
 $$
 f_{\mathrm{RC}}
@@ -225,7 +143,7 @@ f_{\mathrm{RC}}
 \frac{1}{2\pi\tau_{\mathrm{RC}}}.
 $$
 
-For the cylindrical annular geometry used in our work, the bulk radial resistance is
+For our annular geometry, the radial Ohmic resistance is
 
 $$
 R
@@ -234,7 +152,7 @@ R
 {2\pi\sigma L},
 $$
 
-while the effective double-layer capacitance leads to
+and the resulting charging timescale becomes
 
 $$
 \tau_{\mathrm{RC}}
@@ -246,7 +164,7 @@ $$
 }.
 $$
 
-For
+With
 
 $$
 a=6\ \mu\mathrm{m},
@@ -254,15 +172,15 @@ a=6\ \mu\mathrm{m},
 b=20\ \mu\mathrm{m},
 $$
 
-under the CSF conditions used in the study,
+the model gives
 
 $$
 \tau_{\mathrm{RC}}
 \approx
-2.81\ \mu\mathrm{s}
+2.81\ \mu\mathrm{s},
 $$
 
-and therefore
+or
 
 $$
 f_{\mathrm{RC}}
@@ -270,41 +188,25 @@ f_{\mathrm{RC}}
 56.6\ \mathrm{kHz}.
 $$
 
-Conventional ACEO flow tends to exist inside a comparatively narrow frequency window associated with this charging dynamics.
+This creates the familiar ACEO trade-off.
 
-At low frequency, electrochemical charge transfer has enough time to become important.
+At sufficiently low frequency, each half-cycle lasts long enough for undesirable electrochemical charge transfer to develop.
 
-At sufficiently high frequency, the EDL cannot respond strongly enough during each cycle.
+At sufficiently high frequency, the EDL cannot charge strongly enough during the cycle.
 
-The result is a restricted operating window.
+Useful flow is therefore tied to an electrical operating window.
 
----
+In dilute electrolytes this can be manageable. In a highly conductive physiological medium, the available window becomes much less forgiving.
 
-# 6. Why High Conductivity Makes This Worse
+One might imagine compensating by simply increasing the applied voltage.
 
-CSF does not behave like the very dilute electrolytes commonly used to demonstrate conventional electro-osmotic devices.
-
-Its conductivity is
-
-$$
-\sigma \approx 1.68\ \mathrm{S\,m^{-1}}.
-$$
-
-The high conductivity alters the electrical charging dynamics and makes it difficult to simply increase voltage to compensate for poor electro-osmotic performance.
-
-Why not just increase the voltage?
-
-Because electrode reactions are strongly nonlinear.
-
-As the electrode overpotential rises, **Faradaic current** increases rapidly.
+Unfortunately, the electrode-electrolyte interface is nonlinear.
 
 ---
 
-# 7. Capacitive Current vs Faradaic Current
+## The price of increasing voltage
 
-An ideal blocking interface stores charge capacitively.
-
-Its double-layer current density is
+An ideally blocking interface stores charge capacitively,
 
 $$
 i_{\mathrm{dl}}
@@ -315,9 +217,7 @@ $$
 
 where $\eta$ is the interfacial overpotential.
 
-But a real electrode can also exchange charge electrochemically with the liquid.
-
-The Faradaic branch is described using Butler–Volmer kinetics:
+A real exposed electrode can also transfer charge chemically. The Faradaic contribution is described by Butler–Volmer kinetics,
 
 $$
 i_{\mathrm{F}}
@@ -334,9 +234,6 @@ i_0
 \right].
 $$
 
-This exponential dependence is the dangerous part.
-
-<!-- EXTERNAL IMAGE 2 -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/butler-volmer-current.svg' | relative_url }}"
@@ -349,11 +246,11 @@ This exponential dependence is the dangerous part.
   </figcaption>
 </figure>
 
-Near equilibrium, Faradaic current may remain relatively small.
+The important feature is the exponential growth.
 
-Once overpotential grows, however, charge-transfer reactions increase rapidly.
+Near equilibrium, Faradaic current can remain small. Increase the overpotential sufficiently, and charge-transfer reactions rise rapidly.
 
-The total interfacial current is therefore
+The interface therefore carries
 
 $$
 i_{\mathrm{total}}
@@ -363,15 +260,17 @@ i_{\mathrm{dl}}
 i_{\mathrm{F}}.
 $$
 
-For biomedical operation, we would ideally like the capacitive branch to dominate.
+For a biomedical actuator, we would like the first contribution to dominate.
 
-Simply pushing conventional ACEO to higher voltage is therefore not a clean solution.
+The usual engineering instinct—raise the voltage until the flow becomes useful—therefore runs directly into the chemistry of the interface.
+
+This was the point where the architecture itself seemed worth reconsidering.
 
 ---
 
-# 8. The Central Design Idea: Separate the Two Jobs
+## One electrode is being asked to do two jobs
 
-Recall that electro-osmotic velocity depends roughly on
+Recall the thin-EDL scaling
 
 $$
 u_{\mathrm{EO}}
@@ -379,14 +278,14 @@ u_{\mathrm{EO}}
 \zeta E_t.
 $$
 
-A conventional electrode system tries to create both:
+A conventional ACEO electrode participates in both sides of this expression.
 
-- the wall charge responsible for $\zeta$,
-- the tangential field $E_t$.
+It influences the wall charge that establishes $\zeta$, while also participating in the electric field that produces $E_t$.
 
-We instead physically separated these functions.
+The two processes therefore inherit strongly coupled electrical dynamics.
 
-<!-- PAPER FIGURE: Fig. 5, PDF page 10 -->
+Our architecture separates them.
+
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig05-architecture.png' | relative_url }}"
@@ -394,22 +293,15 @@ We instead physically separated these functions.
     style="max-width:900px;width:95%;display:block;margin:auto;"
   >
   <figcaption>
-    Decoupled electrode architecture. The buried gate controls wall
-    charge, while exposed propulsion electrodes generate the tangential
-    field. Source: Fig. 5 of the paper. Add the publisher-required credit
-    line if reuse permission is applicable.
+    Decoupled capacitive-gate architecture. A buried gate controls the
+    wall state while exposed propulsion electrodes generate the axial
+    tangential field. Source: Fig. 5 of the paper.
   </figcaption>
 </figure>
 
-The architecture contains two electrically distinct subsystems.
-
-## Gate electrode
-
 A **buried gate electrode** lies beneath a thin Al$_2$O$_3$ dielectric.
 
-It does not directly contact the electrolyte.
-
-Its role is to control the wall potential and therefore the EDL.
+Because the gate does not directly contact the electrolyte, it can modulate the interfacial potential capacitively without itself acting as a Faradaic electrode.
 
 Conceptually,
 
@@ -419,11 +311,7 @@ V_{\mathrm{gate}}
 \zeta_{\mathrm{ind}}.
 $$
 
-Because the gate is capacitively isolated, it can modulate surface charge without itself providing a direct Faradaic current path into the electrolyte.
-
-## Propulsion electrodes
-
-A separate set of exposed asymmetric electrodes generates the axial tangential field:
+A separate pair of exposed propulsion electrodes controls the bulk electric field,
 
 $$
 V_{\mathrm{prop}}
@@ -431,23 +319,24 @@ V_{\mathrm{prop}}
 E_t.
 $$
 
-The electro-osmotic forcing then arises from their interaction:
+The resulting flow is produced by their interaction,
 
 $$
-u
+U
 \sim
 \zeta_{\mathrm{ind}}E_t.
 $$
 
-This separation is the conceptual heart of the paper.
+This is the main architectural idea.
 
-Instead of forcing one electrode system to perform both tasks through one charging dynamics, **surface-charge control and field generation become independently tunable quantities**.
+Not “a better electrode shape,” and not simply “more voltage,” but a separation of **surface-charge control** from **field generation**.
+
+Each branch can then be limited and tuned according to the physics relevant to it.
 
 ---
 
-# 9. The Actual Geometry
+## The geometry we modelled
 
-<!-- OPTIONAL PAPER FIGURE: Fig. 1, PDF page 3 -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig01-geometry.png' | relative_url }}"
@@ -455,59 +344,51 @@ Instead of forcing one electrode system to perform both tasks through one chargi
     style="max-width:720px;width:80%;display:block;margin:auto;"
   >
   <figcaption>
-    Geometry used for the mathematical model. Source: Fig. 1 of the paper.
+    Representative cylindrical geometry used in the mathematical model.
+    Source: Fig. 1 of the paper.
   </figcaption>
 </figure>
 
-The representative cylindrical channel has:
+The representative device is an annular cylindrical channel with dimensions of approximately
 
 $$
 a=6\ \mu\mathrm{m},
-$$
-
-$$
+\qquad
 b=20\ \mu\mathrm{m},
+\qquad
+L\approx120\ \mu\mathrm{m}.
 $$
 
-and approximately
+The buried gate modifies the wall state through the dielectric. Asymmetric exposed propulsion electrodes establish the tangential field along the channel.
 
-$$
-L=120\ \mu\mathrm{m}.
-$$
-
-The buried gate controls the wall potential, while asymmetric propulsion electrodes establish the axial field.
-
-The cylindrical geometry also allows the problem to be represented using a 2D axisymmetric numerical model.
+The geometry is axisymmetric, which also makes a 2D axisymmetric multiphysics formulation possible without discarding the essential cylindrical structure.
 
 ---
 
-# 10. Why Ordinary Poisson–Boltzmann Theory Was Not Enough
+## Classical Poisson–Boltzmann theory predicts something impossible
 
-At low surface potential and low ionic concentration, the electric double layer is often modelled using classical Poisson–Boltzmann theory.
+Once the architecture was separated electrically, another problem became impossible to ignore.
 
-For a symmetric electrolyte, the classical ionic distributions have the familiar exponential form
+At low potential and low concentration, the electric double layer is often described by classical Poisson–Boltzmann theory. For a symmetric electrolyte, the ion concentrations have the exponential form
 
 $$
 C_{\pm}
 \propto
 \exp
 \left(
-\mp
-\frac{z_0e\psi}{k_BT}
+\mp\frac{z_0e\psi}{k_BT}
 \right).
 $$
 
-This assumes ions are effectively point particles.
+This treats ions as point particles.
 
-At sufficiently high wall potential, this causes a physical problem.
+At small potential, that is often a useful approximation.
 
-The exponential distribution allows an arbitrarily large number of counterions to accumulate near the surface.
+At large wall potential, it becomes pathological.
 
-Real ions have finite hydrated size.
+The model permits counterion concentration to grow exponentially without any excluded-volume limit. Real hydrated ions obviously cannot pack infinitely densely.
 
-They cannot occupy the same volume.
-
-For the conditions in our system,
+For our operating regime,
 
 $$
 \psi_{\mathrm{gate}}
@@ -515,7 +396,7 @@ $$
 0.15\ \mathrm{V},
 $$
 
-while the thermal voltage is only
+whereas the thermal voltage at room temperature is only
 
 $$
 V_T
@@ -525,13 +406,9 @@ V_T
 25.7\ \mathrm{mV}.
 $$
 
-So the system is far outside the small-potential Debye–Hückel regime.
+This is far outside the small-potential Debye–Hückel regime.
 
----
-
-# 11. Finite Ion Packing
-
-Taking an effective hydrated-ion diameter
+If the effective hydrated-ion diameter is taken as roughly
 
 $$
 a_s
@@ -539,7 +416,7 @@ a_s
 0.4\ \mathrm{nm},
 $$
 
-the maximum physically packable concentration is
+then the corresponding packing ceiling is
 
 $$
 C_{\max}
@@ -549,9 +426,15 @@ C_{\max}
 26\ \mathrm{M}.
 $$
 
-This immediately gives us a useful physical sanity check:
+The classical model eventually predicts concentrations beyond this physical limit.
 
-> A double-layer model predicting concentrations far above approximately 26 M cannot be physically meaningful under this finite-size representation.
+That is not merely an aesthetic problem with the mathematics. It means the model can overestimate the charge stored near the wall, and therefore overestimate electro-osmotic slip.
+
+---
+
+## Steric saturation and the modified Poisson–Boltzmann model
+
+We therefore used a lattice-gas, Bikerman-type modified Poisson–Boltzmann model.
 
 The steric crowding parameter is
 
@@ -561,15 +444,13 @@ $$
 2N_Aa_s^3C_0.
 $$
 
-For the CSF concentration used in the paper,
+For the CSF composition in the model,
 
 $$
-\nu
-\approx
-0.011.
+\nu\approx0.011.
 $$
 
-The corresponding potential at which steric effects become dominant is approximately
+The potential scale beyond which finite-size effects become important is approximately
 
 $$
 \psi_c
@@ -580,25 +461,17 @@ $$
 130\ \mathrm{mV}.
 $$
 
-Our representative wall potential,
+Our representative gate-induced wall potential,
 
 $$
 150\ \mathrm{mV},
 $$
 
-is already beyond this scale.
+already lies beyond this scale.
 
-Steric saturation is therefore not a tiny correction.
+So steric saturation is not a small perturbative correction. It is part of the dominant physics of the operating regime.
 
-It is essential to obtaining physically admissible near-wall concentrations.
-
----
-
-# 12. The Bikerman Modified Poisson–Boltzmann Model
-
-To include finite ion size, we used a lattice-gas or **Bikerman modified Poisson–Boltzmann model**.
-
-The modified ionic concentrations become
+The modified concentrations become
 
 $$
 C_+(\psi)
@@ -634,19 +507,13 @@ C_0
 }.
 $$
 
-The crucial term is the denominator.
+The denominator is the essential difference.
 
-At low potential,
+At low potential, the correction disappears and classical Poisson–Boltzmann behaviour is recovered.
 
-$$
-\nu\rightarrow0,
-$$
+At high potential, the finite packing term suppresses the unbounded exponential accumulation of counterions.
 
-and the classical Boltzmann result is recovered.
-
-At high potential, the denominator suppresses the otherwise unbounded exponential accumulation.
-
-The corresponding modified Poisson equation becomes
+The corresponding modified Poisson equation is
 
 $$
 \nabla^2\psi
@@ -656,7 +523,6 @@ $$
 }{
 \epsilon
 }
-\,
 \frac{
 \sinh(z_0e\psi/k_BT)
 }{
@@ -664,12 +530,13 @@ $$
 2\nu
 \sinh^2
 \left(
-z_0e\psi/2k_BT
+\frac{z_0e\psi}{2k_BT}
 \right)
 }.
 $$
 
-<!-- PAPER FIGURE: Fig. 6, PDF page 10 -->
+The effect is easiest to see graphically.
+
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig06-steric-crowding.png' | relative_url }}"
@@ -677,33 +544,25 @@ $$
     style="max-width:700px;width:80%;display:block;margin:auto;"
   >
   <figcaption>
-    Classical PB predicts rapidly increasing near-wall concentration,
-    whereas the Bikerman model saturates at the finite packing limit.
+    Classical Poisson–Boltzmann theory eventually exceeds the physical
+    ion-packing limit, while the Bikerman-modified model saturates.
     Source: Fig. 6 of the paper.
   </figcaption>
 </figure>
 
-This figure is one of the most important physical checks in the paper.
+This plot is one of the most useful sanity checks in the paper.
 
-The classical curve eventually crosses the physical packing limit.
-
-The modified model does not.
+A physical model should not predict that more hydrated ions occupy a volume than can geometrically fit inside it.
 
 ---
 
-# 13. From Charge Distribution to Flow
+## From the double layer back to the flow
 
-The electrokinetic force density is
+Once the charge distribution is known, it enters the fluid mechanics through the electrokinetic body force.
 
-$$
-\mathbf{f}_e
-=
-\rho_e(-\nabla\psi).
-$$
+At the Reynolds numbers relevant here, inertial effects are negligible. The momentum equation therefore reduces to the Stokes regime.
 
-At the very low Reynolds numbers relevant here, inertia is negligible and the fluid is governed by the Stokes limit.
-
-For axial velocity $u_z(r,t)$, the governing equation becomes
+For the axisymmetric axial velocity,
 
 $$
 \frac{\eta}{r}
@@ -722,7 +581,7 @@ E_t(t)
 0.
 $$
 
-Using Poisson's equation and applying the wall conditions gives a Helmholtz–Smoluchowski-like velocity profile:
+Using Poisson's equation and the wall conditions gives a Helmholtz–Smoluchowski-like result,
 
 $$
 u_z(r,t)
@@ -731,14 +590,11 @@ u_z(r,t)
 \left[
 \zeta_{\mathrm{ind}}(t)
 -
-\psi
-\left(
-r;\zeta_{\mathrm{ind}}(t)
-\right)
+\psi\left(r;\zeta_{\mathrm{ind}}(t)\right)
 \right].
 $$
 
-The area-averaged velocity is therefore
+The area-averaged velocity is then
 
 $$
 \bar U(t)
@@ -749,33 +605,25 @@ $$
 -
 \frac{2}{a^2}
 \int_0^a
-\psi
-\left(
-r;\zeta_{\mathrm{ind}}(t)
-\right)
-r\,dr
+\psi\left(r;\zeta_{\mathrm{ind}}(t)\right)r\,dr
 \right].
 $$
 
-This was the central closed-form result of the reduced quasi-steady model.
-
-Notice what remains visible even inside the more complete expression:
+This is a more complete statement than the elementary slip formula, but structurally the same idea remains visible:
 
 $$
-\boxed{
 U
 \propto
-E_t\zeta_{\mathrm{ind}}
-}
+E_t\zeta_{\mathrm{ind}}.
 $$
 
-which is exactly why separating the two control mechanisms becomes useful.
+That bilinear structure is what later makes phase useful as a control variable.
 
 ---
 
-# 14. Why a Quasi-Static Double Layer Was Reasonable
+## Why the reduced model can treat the double layer as quasi-static
 
-The model contains several characteristic timescales.
+There are three relevant timescales.
 
 The Debye-layer relaxation time is
 
@@ -785,7 +633,7 @@ $$
 \frac{\lambda_D^2}{D}.
 $$
 
-For the parameters used,
+For the parameters in the paper,
 
 $$
 \tau_d
@@ -793,7 +641,7 @@ $$
 4\times10^{-10}\ \mathrm{s}.
 $$
 
-Meanwhile,
+The electrical charging timescale is
 
 $$
 \tau_{\mathrm{RC}}
@@ -801,13 +649,13 @@ $$
 2.81\ \mu\mathrm{s},
 $$
 
-and at the representative operating frequency
+while the representative actuation frequency
 
 $$
-f=2.5\ \mathrm{kHz},
+f=2.5\ \mathrm{kHz}
 $$
 
-the forcing period is
+corresponds to a period
 
 $$
 \frac{1}{f}
@@ -815,7 +663,7 @@ $$
 400\ \mu\mathrm{s}.
 $$
 
-Therefore
+The ordering is therefore
 
 $$
 \boxed{
@@ -827,19 +675,18 @@ $$
 }
 $$
 
-by a substantial margin.
+by a considerable margin.
 
-This separation of timescales motivates treating the radial double layer as quasi-equilibrated relative to the applied waveform in the reduced model.
+That gives the reduced model a useful simplification: the radial EDL can be treated as essentially equilibrated with the instantaneous wall potential while the external waveform evolves much more slowly.
+
+But we did not want the conclusions to depend entirely on that approximation.
 
 ---
 
-# 15. Two Independent Modelling Paths
+## Two models, deliberately built differently
 
-We did not rely on only one model.
+The paper therefore uses two independent modelling routes.
 
-The work used two different modelling pathways.
-
-<!-- PAPER FIGURE: Fig. 2, PDF page 8 -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig02-modeling-workflow.png' | relative_url }}"
@@ -847,72 +694,48 @@ The work used two different modelling pathways.
     style="max-width:900px;width:95%;display:block;margin:auto;"
   >
   <figcaption>
-    Independent analytical and numerical modelling pathways used for
-    cross-verification. Source: Fig. 2 of the paper.
+    The two modelling routes used for cross-verification. Source: Fig. 2
+    of the paper.
   </figcaption>
 </figure>
 
-## Branch A — reduced analytical model
+The first is a reduced analytical path.
 
-The first branch uses:
+It combines the capacitive gate model with a one-dimensional radial Bikerman-MPB solution and then integrates the resulting electro-osmotic velocity profile.
 
-- capacitive wall-potential modelling,
-- a one-dimensional radial Bikerman-MPB solution,
-- quasi-static double-layer behaviour,
-- analytical slip integration.
+The second is a 2D axisymmetric COMSOL model coupling:
 
-This gives a fast reduced description of the mechanism.
+**Electric Currents**, **Transport of Diluted Species**, and **Creeping Flow**.
 
-## Branch B — multiphysics numerical model
+The ionic transport model includes six major CSF species:
 
-The second branch is a 2D axisymmetric COMSOL model coupling:
+Na$^+$, Cl$^-$, K$^+$, Ca$^{2+}$, Mg$^{2+}$, and HCO$_3^-$.
 
-- **Electric Currents**,
-- **Transport of Diluted Species**,
-- **Creeping Flow**.
+The two approaches are intentionally not identical.
 
-The ionic transport includes six major CSF species:
+One asks whether the mechanism can be represented compactly.
 
-- Na$^+$,
-- Cl$^-$,
-- K$^+$,
-- Ca$^{2+}$,
-- Mg$^{2+}$,
-- HCO$_3^-$.
+The other asks whether the same behaviour survives when bulk ionic transport, realistic geometry, electrical conduction and Stokes flow are solved together.
 
-This model captures the channel geometry, bulk field, ionic transport, and resulting Stokes flow.
+That makes agreement between them substantially more informative than simply refining one numerical model.
 
-Using both models allowed the reduced theory to be checked against a substantially more detailed numerical calculation.
-
----
-
-# 16. Mesh Independence
-
-Before using the numerical model for parametric studies, we tested its sensitivity to spatial discretisation.
-
-The final fine model used approximately
+Before using the 2D model for parameter studies, we also checked mesh convergence. The final fine discretisation contained approximately
 
 $$
 182\,450
 $$
 
-elements.
-
-Across the refinement sequence:
-
-- exit velocity changed only negligibly,
-- peak electric field and current density converged,
-- further refinement of the boundary layer produced less than approximately 0.2% change in peak ionic concentrations.
-
-This matters because sub-micrometre and nanometre electrochemical structures can otherwise produce numerical solutions that appear physically meaningful while still being mesh dependent.
+elements, with velocity, electric-field, current-density and ionic-concentration quantities stabilizing under further refinement.
 
 ---
 
-# 17. The Most Interesting Result: Phase Becomes a Control Variable
+## Phase is where the decoupling becomes interesting
 
-Once wall charging and tangential-field generation are separated, their **relative phase** becomes an independently controllable quantity.
+Separating wall charging from tangential-field generation does something more useful than merely widening a design space.
 
-Let the wall-control signal be
+It creates a new independent variable: the **relative phase** between the two signals.
+
+Let
 
 $$
 \psi_{\mathrm{gate}}(t)
@@ -921,7 +744,7 @@ $$
 \sin(\omega t+\theta),
 $$
 
-and the propulsion signal be
+while the propulsion signal is
 
 $$
 V_{\mathrm{prop}}(t)
@@ -930,12 +753,12 @@ V_{\mathrm{prop}}
 \sin(\omega t).
 $$
 
-Because
+In the quasi-static regime,
 
 $$
 \zeta_{\mathrm{ind}}(t)
 \propto
-\psi_{\mathrm{gate}}(t)
+\psi_{\mathrm{gate}}(t),
 $$
 
 and
@@ -943,19 +766,18 @@ and
 $$
 E_t(t)
 \propto
-V_{\mathrm{prop}}(t),
+V_{\mathrm{prop}}(t).
 $$
 
-the instantaneous flow scales approximately as
+Therefore
 
 $$
 U(t)
 \propto
-\sin(\omega t+\theta)
-\sin(\omega t).
+\sin(\omega t+\theta)\sin(\omega t).
 $$
 
-Now average over one period:
+Averaging over one cycle gives
 
 $$
 \left\langle U\right\rangle
@@ -963,10 +785,10 @@ $$
 \frac{\omega}{2\pi}
 \int_0^{2\pi/\omega}
 \sin(\omega t+\theta)
-\sin(\omega t)\,dt.
+\sin(\omega t)\,dt,
 $$
 
-Using the product identity gives
+and therefore
 
 $$
 \boxed{
@@ -976,41 +798,40 @@ $$
 }
 $$
 
-and therefore the flow direction follows a remarkably simple rule.
+This simple result is probably my favourite part of the model.
 
-### $\theta=0$
-
-$$
-\cos 0=1
-$$
-
-Maximum forward flow.
-
-### $\theta=\pi/2$
+At
 
 $$
-\cos\left(\frac{\pi}{2}\right)=0
+\theta=0,
 $$
 
-Zero time-averaged flow.
+the two drives reinforce each other and the time-averaged flow is maximally forward.
 
-### $\theta=\pi$
+At
 
 $$
-\cos\pi=-1
+\theta=\frac{\pi}{2},
 $$
 
-Full flow reversal.
+the cycle average vanishes.
 
-This means the pump can be reversed **without changing the geometry, frequency, or voltage amplitudes**.
+At
 
-Only the phase relationship needs to change.
+$$
+\theta=\pi,
+$$
 
----
+the sign reverses.
 
-# 18. The Parametric Results
+Nothing about the geometry changes.
 
-<!-- PAPER FIGURE: Fig. 7, PDF page 11 -->
+Neither voltage amplitude needs to change.
+
+The driving frequency does not need to change.
+
+Flow direction is controlled by phase.
+
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig07-parametric-results.png' | relative_url }}"
@@ -1018,28 +839,23 @@ Only the phase relationship needs to change.
     style="max-width:950px;width:98%;display:block;margin:auto;"
   >
   <figcaption>
-    Main parametric results. Panel (b) demonstrates phase-controlled flow
-    reversal, while panel (d) shows the broad non-dimensional frequency
-    plateau. Source: Fig. 7 of the paper.
+    The main parametric results. Panel (b) shows the phase-controlled
+    reversal, while panel (d) shows the broad response in the
+    non-dimensional driving variable. Source: Fig. 7 of the paper.
   </figcaption>
 </figure>
 
-Panel (b) directly shows the approximately cosine-like dependence of the time-averaged flow on phase.
+The resulting phase curve is approximately cosine-like, exactly as the reduced derivation suggests.
 
-This is important because the phase is now effectively a **software-controlled propulsion variable**.
+This turns phase into a software-controlled propulsion variable.
 
-The same physical structure can provide:
-
-- forward motion,
-- reduced forward motion,
-- zero net motion,
-- reverse motion.
+A single structure can move continuously through forward flow, zero mean flow, and reverse flow simply by changing the delay between two electrical signals.
 
 ---
 
-# 19. Voltage Scaling
+## The voltage dependence is almost embarrassingly simple
 
-The analytical structure predicts approximately
+The same bilinear structure predicts
 
 $$
 \langle U\rangle
@@ -1047,71 +863,55 @@ $$
 \psi_{\mathrm{gate}}V_{\mathrm{prop}}.
 $$
 
-Increasing the gate potential strengthens the wall charge.
+The gate controls the strength of the wall state.
 
-Increasing the propulsion voltage strengthens the tangential field.
+The propulsion electrode controls the field acting on it.
 
-Their product therefore sets the leading-order electro-osmotic forcing.
-
-To make this behaviour easier to compare across different voltage combinations, we defined a non-dimensional transport efficiency
+To expose this scaling, we defined
 
 $$
-\tilde w(\theta)
+\tilde w
 =
 \frac{
 \langle U\rangle_t\eta L
 }{
-\epsilon
-\psi_{\mathrm{gate}}
-V_{\mathrm{prop}}
+\epsilon\psi_{\mathrm{gate}}V_{\mathrm{prop}}
 }.
 $$
 
-The 2D model gives approximately
+Across the investigated range, the full 2D model gives approximately
 
 $$
-\tilde w
-\approx
-0.4
+\tilde w\approx0.4,
 $$
 
-over the investigated range.
+while the independent 1D model gives a similar value.
 
-The independently derived 1D model gives a very similar value.
+This collapse matters more than the numerical value itself.
 
-That collapse is useful because it shows that the dominant voltage dependence has been correctly isolated.
+It says that once the obvious voltage product is divided out, both modelling approaches see essentially the same transport efficiency.
 
----
-
-# 20. Representative Operating Point
-
-A central operating point in the study was
+At the representative operating point
 
 $$
-\psi_{\mathrm{gate}}
-=
-0.15\ \mathrm{V},
+\psi_{\mathrm{gate}}=0.15\ \mathrm{V},
 $$
 
 $$
-V_{\mathrm{prop}}
-=
-1.2\ \mathrm{V},
+V_{\mathrm{prop}}=1.2\ \mathrm{V},
 $$
 
 $$
-f
-=
-2.5\ \mathrm{kHz},
+f=2.5\ \mathrm{kHz},
 $$
 
 and
 
 $$
-\theta=0.
+\theta=0,
 $$
 
-At this condition, the calculated time-averaged electro-osmotic velocity is approximately
+the calculated mean velocity is approximately
 
 $$
 \boxed{
@@ -1121,17 +921,19 @@ $$
 }
 $$
 
-for the CSF model used.
+in the CSF model.
 
-But velocity by itself is not enough.
+That is the attractive number.
 
-A biomedical design also has to remain electrochemically and thermally safe.
+It is not, however, the design criterion.
+
+A biomedical electrokinetic actuator that achieves high velocity while disturbing ionic balance or generating excessive heat is not useful.
 
 ---
 
-# 21. The Dimensionless Driving Number
+## The operating window is set by more than flow rate
 
-To combine voltage and frequency effects, the paper introduces
+To combine the effects of frequency and voltage, the analysis uses the dimensionless driving number
 
 $$
 \Pi_f
@@ -1148,19 +950,19 @@ f_{\mathrm{RC}}
 },
 $$
 
-where
+with
 
 $$
 V_T
 =
-\frac{k_BT}{e}
-\approx
-25.7\ \mathrm{mV}.
+\frac{k_BT}{e}.
 $$
 
-When the response is plotted against $\Pi_f$, the useful velocity region extends across a broad plateau rather than showing only the narrow single-pole response expected from conventional coupled ACEO.
+The velocity response exhibits a comparatively broad plateau in this variable instead of being confined to one narrow single-pole peak.
 
-The practical safe region identified in the study lies approximately within
+But the practical window is narrower than the velocity plateau.
+
+The useful region is approximately
 
 $$
 2\times10^{-4}
@@ -1170,42 +972,22 @@ $$
 10^{-3}.
 $$
 
-The lower side is constrained predominantly by electrochemical concentration disturbances.
+The lower side is constrained mainly by electrochemical and ionic effects. If the field reverses too slowly, Faradaic processes have more time to proceed during each half-cycle, producing local concentration polarisation.
 
-The upper side eventually encounters capacitive roll-off.
+As frequency increases, each half-cycle becomes shorter. Charge-transfer reactions have less time to alter the surrounding electrolyte before the field reverses.
 
----
+This creates an important distinction:
 
-# 22. Ionic Concentration Is a Safety Constraint
+> The best operating frequency is not necessarily the frequency that maximizes velocity.
 
-A high flow velocity is not useful if the actuator significantly changes the chemical composition of the surrounding physiological liquid.
-
-The model therefore tracked the principal ionic constituents of CSF.
-
-At low enough actuation frequency, each AC half-cycle is long.
-
-Faradaic reactions have more time to proceed before the field reverses.
-
-This can produce local concentration polarisation.
-
-Increasing frequency shortens the duration available for those reactions during each half-cycle.
-
-The maximum ionic excursion therefore falls as the field reverses more rapidly.
-
-The operating point must consequently lie in a region where:
-
-1. ionic concentration excursions remain acceptable;
-2. EDL charging remains effective enough to maintain useful flow.
-
-This is a more meaningful design criterion than simply maximizing velocity.
+It is the frequency that gives enough transport while keeping the electrolyte chemically and thermally inside an acceptable regime.
 
 ---
 
-# 23. Voltage Balance and Ion-Flux Geometry
+## Ionic transport reveals something voltage magnitude alone cannot
 
-An especially useful result from the simulations is that the spatial pattern of ion transport depends strongly on voltage balance.
+The simulations make this particularly clear when looking at ion-flux streamlines.
 
-<!-- OPTIONAL PAPER FIGURE: Fig. 10, PDF page 16 -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig10-ion-flux-balance.png' | relative_url }}"
@@ -1213,32 +995,32 @@ An especially useful result from the simulations is that the spatial pattern of 
     style="max-width:900px;width:95%;display:block;margin:auto;"
   >
   <figcaption>
-    Representative ion concentration and flux-streamline fields. Balanced
-    potentials keep the flux comparatively axial, while imbalance bends
-    flux toward the propulsion-electrode geometry. Source: Fig. 10 of the
-    paper.
+    Representative concentration fields and ion-flux streamlines. Near
+    the balanced condition, transport remains comparatively axial;
+    imbalance bends the flux toward the propulsion electrode. Source:
+    Fig. 10 of the paper.
   </figcaption>
 </figure>
 
-When the gate-induced and propulsion-induced potentials are appropriately balanced, the ion-flux streamlines remain comparatively axial.
+When the gate-induced and propulsion-induced potentials are appropriately balanced, the ionic flux remains comparatively axial.
 
-Moving away from this balance increases transverse field components.
+Move away from that balance and the electric field develops a stronger transverse component.
 
-The streamlines curve toward the propulsion electrode and generate stronger local concentration accumulation or depletion.
+The flux curves toward the propulsion electrode, producing stronger local accumulation or depletion.
 
-This illustrates an important point:
+This is a useful reminder that there is no single scalar called “safe voltage.”
 
-> Safe operation cannot be inferred from voltage magnitude alone; the spatial electric-field topology matters.
+The same nominal voltage magnitude can produce very different local behaviour depending on how the fields interact geometrically.
 
 ---
 
-# 24. Dielectric Breakdown Sets the Gate Limit
+## Each branch fails for a different reason
 
-The gate is isolated from the electrolyte by a thin Al$_2$O$_3$ dielectric.
+The decoupled architecture is useful partly because its two branches encounter different physical limits.
 
-This prevents direct Faradaic contact, but introduces a different limit:
+The buried gate is insulated from the electrolyte by a thin Al$_2$O$_3$ dielectric.
 
-**dielectric breakdown.**
+That suppresses direct Faradaic exchange, but it introduces a dielectric-reliability limit instead.
 
 For the representative
 
@@ -1246,9 +1028,7 @@ $$
 d=30\ \mathrm{nm}
 $$
 
-Al$_2$O$_3$ layer, the simulation gives an approximately linear relation between applied terminal gate voltage and electric field in the dielectric.
-
-Using a conservative dielectric-strength assumption of approximately
+oxide layer and a conservative breakdown field of roughly
 
 $$
 E_{\mathrm{bd}}
@@ -1256,7 +1036,7 @@ E_{\mathrm{bd}}
 5\ \mathrm{MV\,cm^{-1}},
 $$
 
-the representative breakdown-limited wall potential is approximately
+the corresponding wall-potential ceiling is around
 
 $$
 \psi_{\mathrm{gate,max}}
@@ -1264,59 +1044,30 @@ $$
 0.15\ \mathrm{V}.
 $$
 
-This is why
+The exposed propulsion electrodes face the complementary problem.
+
+They are in direct contact with the electrolyte and are therefore constrained by Faradaic charge transfer.
+
+We tracked the ratio
 
 $$
-\psi_{\mathrm{gate}}=0.15\ \mathrm{V}
-$$
-
-appears repeatedly in the operating analysis.
-
----
-
-# 25. Faradaic Current Sets the Propulsion-Electrode Limit
-
-The exposed propulsion electrodes have the opposite problem.
-
-They are in contact with the electrolyte, so Faradaic activity must remain controlled.
-
-The simulations evaluated the ratio
-
-$$
-\mathcal{R}(t)
+\mathcal R(t)
 =
-\frac{
-|i_{\mathrm{F}}(t)|
-}{
-|i_{\mathrm{dl}}(t)|
-}.
+\frac{|i_{\mathrm{F}}(t)|}
+{|i_{\mathrm{dl}}(t)|}.
 $$
 
-The surface-averaged Faradaic contribution remains comparatively small at low propulsion voltage but rises dramatically as the applied voltage increases.
+The Faradaic fraction remains relatively small at modest voltage and then rises very rapidly.
 
-The analysis identifies approximately
+Under the assumptions of the model, the resulting approximate surface-averaged upper limit is
 
 $$
 V_{\mathrm{prop}}
 \lesssim
-2.0\ \mathrm{V}
+2.0\ \mathrm{V}.
 $$
 
-as the surface-averaged upper operating bound under the model assumptions.
-
-The representative value
-
-$$
-V_{\mathrm{prop}}=1.2\ \mathrm{V}
-$$
-
-therefore remains well inside this limit.
-
----
-
-# 26. The Resulting Safe Voltage Envelope
-
-Combining dielectric breakdown at the gate with electrochemical limits at the propulsion electrode produces the approximate design envelope
+Putting the two constraints together gives the approximate operating envelope
 
 $$
 \boxed{
@@ -1326,29 +1077,21 @@ $$
 \qquad
 V_{\mathrm{prop}}
 \lesssim
-2.0\ \mathrm{V}
+2.0\ \mathrm{V}.
 }
 $$
 
-for the modelling assumptions used.
+The gate is limited mainly by dielectric reliability.
 
-This is an important feature of the decoupled architecture:
+The propulsion electrode is limited mainly by electrochemistry.
 
-> each subsystem is limited by a different physical mechanism.
-
-The gate is primarily constrained by dielectric reliability.
-
-The propulsion stage is primarily constrained by electrochemical charge transfer.
-
-Separating the two functions allows each to be designed around its own physical limitation.
+This is precisely the sort of separation we wanted from the architecture: each function can be designed around its own failure mechanism instead of inheriting one combined compromise.
 
 ---
 
-# 27. Joule Heating
+## Heating turns out not to be the dominant constraint
 
-Electrical actuation also heats the electrolyte.
-
-The volumetric heat-generation term is approximately
+Electrical actuation also produces Joule heating,
 
 $$
 Q_e
@@ -1358,10 +1101,10 @@ Q_e
 \sigma|\mathbf{E}|^2.
 $$
 
-The fluid temperature obeys the transient energy equation
+The temperature field obeys
 
 $$
-\rho_f C_p
+\rho_fC_p
 \left(
 \frac{\partial T}{\partial t}
 +
@@ -1373,15 +1116,9 @@ $$
 Q_e.
 $$
 
-Because heating scales approximately with
+The quadratic dependence on field strength means that increasing voltage becomes thermally expensive much faster than it becomes hydrodynamically useful.
 
-$$
-|\mathbf{E}|^2,
-$$
-
-raising voltage to obtain additional velocity becomes increasingly expensive thermally.
-
-At practical operating voltages in the paper,
+At practical propulsion voltages,
 
 $$
 V_{\mathrm{prop}}
@@ -1389,37 +1126,34 @@ V_{\mathrm{prop}}
 1.2\ \mathrm{V},
 $$
 
-the calculated temperature rise remained below approximately
+the predicted temperature rise remained below roughly
 
 $$
 0.01\ \mathrm{K}.
 $$
 
-Even at the much more aggressive
+Even at the deliberately aggressive condition
 
 $$
 V_{\mathrm{prop}}=4\ \mathrm{V},
 $$
 
-the reported maximum rise was approximately
+the reported maximum rise was only about
 
 $$
 0.16\ \mathrm{K}.
 $$
 
-So thermal limits were not the dominant restriction at the representative operating point.
+In the representative regime, thermal limits were therefore less restrictive than electrochemical and ionic constraints.
 
-Electrochemical and ionic constraints were more important.
+That was useful, because it told us where the actual design pressure lies.
 
 ---
 
-# 28. Independent Model Cross-Validation
+## The reduced model and the full simulation nearly agree
 
-A useful model should not merely produce attractive plots.
+The strongest internal check was to compare the compact 1D model against the 2D multiphysics solution over complete AC cycles.
 
-We therefore compared the reduced 1D result with the independent 2D multiphysics solution.
-
-<!-- PAPER FIGURE: Fig. 12, PDF page 17 -->
 <figure>
   <img
     src="{{ '/assets/images/electroosmosis/paper-fig12-model-cross-validation.png' | relative_url }}"
@@ -1427,52 +1161,38 @@ We therefore compared the reduced 1D result with the independent 2D multiphysics
     style="max-width:720px;width:82%;display:block;margin:auto;"
   >
   <figcaption>
-    Instantaneous exit velocity predicted by the reduced 1D model and
-    the 2D axisymmetric multiphysics simulation. Source: Fig. 12 of the
-    paper.
+    Instantaneous exit velocity predicted independently by the reduced
+    model and the full 2D simulation. Source: Fig. 12 of the paper.
   </figcaption>
 </figure>
 
 At
 
 $$
-\psi_{\mathrm{gate}}
-=
-0.15\ \mathrm{V},
-$$
-
-$$
-V_{\mathrm{prop}}
-=
-1.2\ \mathrm{V},
-$$
-
-and
-
-$$
+\psi_{\mathrm{gate}}=0.15\ \mathrm{V},
+\qquad
+V_{\mathrm{prop}}=1.2\ \mathrm{V},
+\qquad
 f=2.5\ \mathrm{kHz},
 $$
 
-the two predictions agree within approximately
+the two predictions remain within approximately
 
 $$
 5\%-8\%
 $$
 
-over complete AC cycles.
+of each other over complete cycles.
 
-This supports two important assumptions:
+That agreement supports two things at once.
 
-1. the timescale separation used by the quasi-static EDL model is reasonable in the investigated regime;
-2. the Bikerman steric correction captures the dominant high-potential double-layer nonlinearity sufficiently well for the reduced model.
+First, the timescale ordering behind the quasi-static EDL approximation is reasonable in the regime we care about.
 
----
+Second, the sterically corrected double-layer model appears to retain the dominant nonlinear physics without requiring the reduced model to resolve full radial time-dependent ion transport.
 
-# 29. A Linear-Limit Sanity Check
+There is also a simpler sanity check.
 
-Another useful numerical check is to deliberately move the model back toward the regime where classical theory should apply.
-
-When nonlinear electrochemical effects were disabled, the predicted velocity was fitted against propulsion voltage as
+If the nonlinear electrochemical physics is deliberately disabled, classical induced-charge electro-osmosis should recover approximately quadratic voltage scaling,
 
 $$
 \langle U\rangle
@@ -1480,241 +1200,53 @@ $$
 V_{\mathrm{prop}}^n.
 $$
 
-The fitted value was
+The fitted exponent was
 
 $$
 n=2.001.
 $$
 
-That is essentially the expected quadratic scaling of classical linear induced-charge electro-osmosis.
+That is almost exactly the expected classical result.
 
-Recovering known limiting behaviour is important because it tests whether a complicated nonlinear implementation reduces correctly when the additional physics is removed.
+Recovering the known limit is important: complicated models should become simple when the physics is made simple.
 
 ---
 
-# 30. So What Did Decoupling Actually Buy Us?
+## What decoupling actually changes
 
-The answer is not merely "more flow."
+It is tempting to summarize the paper as “a design that produces higher electro-osmotic flow.”
 
-The important change is **control structure**.
+I think that misses the more interesting point.
 
-A conventional coupled ACEO device ties several physical processes together:
+The real change is in the **control structure** of the electrokinetic system.
+
+A conventional ACEO electrode effectively participates in both
 
 $$
-\text{electrode}
-\rightarrow
-\begin{cases}
-\text{EDL charging}\\
-\text{tangential field}
-\end{cases}
+\text{EDL charging}
 $$
 
-and both are strongly constrained by one charging response.
+and
 
-The decoupled architecture instead gives
+$$
+\text{tangential-field generation}.
+$$
+
+Those mechanisms are therefore tied together by the same electrical architecture.
+
+The decoupled device instead gives
 
 $$
 \text{gate}
 \rightarrow
-\zeta
+\zeta_{\mathrm{ind}},
 $$
 
-and independently
+while independently
 
 $$
 \text{propulsion electrodes}
 \rightarrow
-E_t.
-$$
-
-That creates several new degrees of freedom:
-
-- gate amplitude,
-- propulsion amplitude,
-- operating frequency,
-- relative phase.
-
-Most importantly,
-
-$$
-\boxed{
-\theta
-\text{ becomes an independent flow-direction control variable}
-}
-$$
-
-rather than being effectively fixed by electrode geometry and RC dynamics.
-
----
-
-# 31. Why the Phase Result Matters
-
-The relation
-
-$$
-\langle U\rangle
-\propto
-\cos\theta
-$$
-
-looks mathematically simple.
-
-Its engineering implication is much larger.
-
-A single device can theoretically transition continuously between:
-
-$$
-\text{forward}
-\rightarrow
-\text{slower forward}
-\rightarrow
-\text{zero}
-\rightarrow
-\text{reverse}
-$$
-
-without physically reconfiguring the channel.
-
-For a future electrokinetically propelled microdevice, that would mean flow direction could be controlled electronically through waveform phase alone.
-
----
-
-# 32. What This Work Does *Not* Prove
-
-It is important to separate a computational design study from an experimentally demonstrated device.
-
-This work is computational.
-
-Several simplifying assumptions remain.
-
-## 1. Axisymmetry
-
-The primary numerical model assumes continuous azimuthally uniform electrode rings.
-
-A fabricated device with segmented electrodes could introduce:
-
-- three-dimensional edge fields,
-- azimuthal concentration gradients,
-- secondary vortices,
-- local thermal hotspots.
-
-## 2. Quasi-static EDL approximation in the reduced model
-
-The reduced model assumes
-
-$$
-\tau_d
-\ll
-\tau_{\mathrm{RC}}
-\ll
-\frac{1}{f}.
-$$
-
-Outside this ordering, fully time-resolved radial ion transport would become necessary.
-
-## 3. Lumped double-layer capacitance
-
-The effective gate model does not explicitly resolve every possible microscopic interfacial phenomenon such as:
-
-- specific ion adsorption,
-- detailed Stern-layer restructuring,
-- surface-charge regulation.
-
-## 4. No direct experimental validation yet
-
-The flow velocities and phase-control behaviour have not yet been demonstrated experimentally in CSF.
-
-The numerical framework was instead checked through:
-
-- mesh convergence,
-- independent reduced/full model comparison,
-- recovery of classical voltage scaling,
-- comparison against earlier electro-osmotic benchmarks.
-
-An experimental demonstration remains the next important step.
-
----
-
-# 33. What Would Be a Clean Experimental Test?
-
-One particularly attractive prediction to validate is
-
-$$
-\boxed{
-\langle U\rangle
-\propto
-\cos\theta
-}
-$$
-
-because it is largely independent of absolute calibration of electro-osmotic mobility.
-
-A possible experimental system would require:
-
-- a microfabricated cylindrical or equivalent channel,
-- a buried dielectric-isolated gate,
-- exposed propulsion electrodes,
-- a high-conductivity CSF analogue such as PBS,
-- phase-controlled waveform generation,
-- micro-PIV or micro-laser-Doppler velocimetry.
-
-Then one could hold
-
-$$
-f,
-\qquad
-V_{\mathrm{prop}},
-\qquad
-V_{\mathrm{gate}}
-$$
-
-fixed while sweeping only
-
-$$
-\theta.
-$$
-
-The central experimental signature would be:
-
-$$
-\theta=0
-\rightarrow
-\text{forward flow},
-$$
-
-$$
-\theta=\frac{\pi}{2}
-\rightarrow
-\text{approximately zero mean flow},
-$$
-
-$$
-\theta=\pi
-\rightarrow
-\text{reverse flow}.
-$$
-
-That would be a particularly direct test of the physical mechanism proposed in the paper.
-
----
-
-# 34. The Main Takeaway
-
-The central insight of the work is relatively simple:
-
-> **Do not force one electrode system to simultaneously control the double-layer charge and generate the propulsion field.**
-
-Separating those functions changes the control problem.
-
-The gate primarily determines
-
-$$
-\zeta_{\mathrm{ind}},
-$$
-
-while the propulsion electrodes determine
-
-$$
 E_t.
 $$
 
@@ -1726,21 +1258,119 @@ U
 \zeta_{\mathrm{ind}}E_t,
 $$
 
-their relative amplitude and phase become independently useful variables.
+the system acquires several independent control variables:
 
-The combination of:
+the gate amplitude, propulsion amplitude, actuation frequency, and relative phase.
 
-- decoupled surface-charge control,
-- finite-ion-size double-layer modelling,
-- nonlinear electrochemical constraints,
-- multiphysics simulation,
-- phase-controlled actuation,
+The phase is the most interesting because it directly changes the **sign** of the mean flow.
 
-produces a computational design framework for electro-osmotic flow in a regime where conventional dilute-electrolyte assumptions are no longer adequate.
+A single device can therefore move continuously through
+
+$$
+\text{forward}
+\rightarrow
+\text{zero}
+\rightarrow
+\text{reverse}
+$$
+
+without mechanically changing anything.
+
+That is much closer to a steerable actuator than to a conventional fixed-direction micropump.
 
 ---
 
-# Paper
+## Where the model stops
+
+There are several things this paper does not establish.
+
+The results are computational, not an experimental demonstration.
+
+The primary model is axisymmetric and assumes continuous ring-like electrodes. A fabricated device with segmented or imperfect electrodes would introduce 3D edge fields, azimuthal concentration gradients, secondary vortices and potentially stronger local heating.
+
+The reduced model assumes
+
+$$
+\tau_d
+\ll
+\tau_{\mathrm{RC}}
+\ll
+\frac{1}{f}.
+$$
+
+Move far enough outside that ordering and the quasi-static treatment of the radial EDL will fail.
+
+The effective capacitance model is also deliberately coarse at the molecular scale. It does not resolve specific ion adsorption, detailed Stern-layer restructuring, or every possible surface-charge-regulation mechanism.
+
+Most importantly, the predicted velocity and phase reversal have not yet been directly measured in CSF.
+
+The computational framework was instead checked through mesh convergence, agreement between independent models, recovery of the classical voltage-scaling limit, and comparison with earlier electrokinetic benchmarks.
+
+The clean next experiment is therefore fairly obvious.
+
+Hold
+
+$$
+f,
+\qquad
+V_{\mathrm{prop}},
+\qquad
+V_{\mathrm{gate}}
+$$
+
+fixed and sweep only
+
+$$
+\theta.
+$$
+
+Then measure the resulting flow using something like micro-PIV or micro-laser-Doppler velocimetry in a high-conductivity physiological analogue.
+
+The key prediction is not a delicate one:
+
+$$
+\theta=0
+\quad\Rightarrow\quad
+\text{forward flow},
+$$
+
+$$
+\theta=\frac{\pi}{2}
+\quad\Rightarrow\quad
+\text{approximately zero mean flow},
+$$
+
+$$
+\theta=\pi
+\quad\Rightarrow\quad
+\text{reverse flow}.
+$$
+
+If that cosine-like reversal survives experimentally, it would be a particularly direct validation of the proposed mechanism.
+
+---
+
+## The part I would keep in one equation
+
+If I had to compress the entire paper into one expression, it would still be
+
+$$
+U
+\propto
+\zeta_{\mathrm{ind}}E_t.
+$$
+
+Conventional architectures largely tie those two quantities together.
+
+The decoupled architecture gives them separate physical controls.
+
+Everything else—the broader frequency response, the independent voltage constraints, and especially phase-controlled reversal—follows from taking that separation seriously.
+
+That was the core idea.
+
+---
+
+### Paper
 
 **Shriram Srihari and Adithya Lakshminarayanan**
 
