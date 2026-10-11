@@ -1,11 +1,4 @@
-# `index.md`
-
----
-layout: default
-title: Adithya L
----
-
-# Adithya L
+# Adithya Lakshminarayanan
 
 ### Scientific ML · Computational Physics · AI Systems · Control
 
