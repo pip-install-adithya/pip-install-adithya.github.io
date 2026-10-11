@@ -1,59 +1,64 @@
+---
+layout: default
+title: Fluid Dynamics & Computational Physics
+---
+
 [Home](./) · [Scientific ML](./scientific-ml) · [Interpretability](./interpretability-rl) · [AI Systems](./ai-systems) · [Control](./controls-robotics) · [Publications](./publications)
 
 # Fluid Dynamics & Computational Physics
 
-Fluid mechanics is an interesting example of how relatively compact physical laws can produce extraordinarily complicated behaviour.
+Fluid mechanics is a striking example of how compact physical laws can produce extraordinarily complicated behaviour.
 
 For an incompressible Newtonian fluid,
 
-\[
-\frac{\partial \mathbf u}{\partial t}
+$$
+\frac{\partial \mathbf{u}}{\partial t}
 +
-(\mathbf u\cdot\nabla)\mathbf u
+(\mathbf{u}\cdot\nabla)\mathbf{u}
 =
 -\frac{1}{\rho}\nabla p
 +
-\nu\nabla^2\mathbf u
+\nu\nabla^2\mathbf{u}
 +
-\mathbf f,
-\]
+\mathbf{f},
+$$
 
-with
+subject to
 
-\[
-\nabla\cdot\mathbf u=0.
-\]
+$$
+\nabla\cdot\mathbf{u}=0.
+$$
 
-Despite the compact form, solutions can contain:
+Despite this compact formulation, solutions may contain:
 
 - boundary layers,
 - separation,
 - vortices,
 - instabilities,
 - turbulence,
-- multiple interacting spatial scales.
+- interacting spatial and temporal scales.
 
-Much of my engineering and research work has involved understanding these phenomena computationally.
+Much of my research and engineering work has involved understanding these behaviours computationally.
 
 ---
 
 # Electrokinetic Flow
 
-At very small scales, fluid motion can be strongly coupled to electrostatics.
+At microscopic scales, fluid motion can couple strongly to electrostatics.
 
-Near a charged surface in an electrolyte, mobile ions form an **electric double layer**.
+Near a charged surface in an electrolyte, mobile ions rearrange and create an **electric double layer**.
 
-Applying an electric field produces a body force on this charge distribution and can drive fluid motion.
+An applied tangential electric field acts on this charge distribution and can generate fluid motion.
 
 This is the basis of electroosmosis.
 
 ---
 
-## Decoupled Capacitive-Gate Electroosmosis
+# Decoupled Capacitive-Gate Electroosmosis
 
 I worked on a continuum model coupling modified Poisson-Boltzmann electrostatics with Stokes flow for high-conductivity electrolytes.
 
-At high ionic concentration, classical dilute-solution approximations become insufficient.
+At sufficiently high ionic concentration, ideal dilute-solution approximations become inaccurate.
 
 The formulation therefore incorporated:
 
@@ -61,75 +66,117 @@ The formulation therefore incorporated:
 - dynamic Stern-layer polarisation,
 - nonlinear electric-double-layer behaviour.
 
-The system used an asymmetric three-electrode geometry with an independently driven capacitive gate.
+The system uses an asymmetric three-electrode configuration containing an independently driven capacitive gate.
 
-Controlling the relative phase between the gate actuation and tangential electric field allowed modulation of surface charge and therefore the direction and magnitude of electroosmotic forcing.
+Controlling the phase between the gate signal and tangential electric field permits dynamic modulation of electric-double-layer surface charge and therefore electroosmotic forcing.
 
-High-fidelity 2D axisymmetric finite-element simulations in COMSOL were used to study:
+High-fidelity 2D axisymmetric finite-element simulations in COMSOL were used to investigate:
 
 - parasitic vortex formation,
-- phase-dependent pumping,
-- volumetric flow rate,
-- high-conductivity operation,
+- harmonic phase effects,
+- volumetric throughput,
+- operation at high conductivity,
 - suppression of Faradaic degradation.
 
 The work was published as a **Featured Article in the Journal of Applied Physics**.
 
-DOI: `10.1063/5.0345688`
+**DOI:** `10.1063/5.0345688`
 
 ---
 
-# Aerodynamics & Active Flow Control
+# Aerodynamics and Active Flow Control
 
-Aircraft performance depends strongly on the interaction between pressure distribution, viscous boundary layers, separation, and wake formation.
+Aircraft performance depends strongly on the interaction between:
 
-At high lift coefficients, preventing or delaying separation becomes especially important.
+- pressure distribution,
+- viscous boundary layers,
+- separation,
+- wake formation.
+
+A useful nondimensional quantity is the Reynolds number:
+
+$$
+Re
+=
+\frac{\rho UL}{\mu}
+=
+\frac{UL}{\nu}.
+$$
+
+It measures the relative influence of inertial and viscous effects.
+
+At high Reynolds number, viscosity may have little influence throughout much of the external flow while remaining decisive inside thin boundary layers near solid surfaces.
 
 ---
 
-## Inter-IIT STOL Aircraft Optimisation
+# Inter-IIT STOL Aircraft Optimisation
 
-As part of the Inter-IIT Tech Meet, I worked on automated aerodynamic optimisation for a high-lift STOL aircraft concept.
+As part of the Inter-IIT Tech Meet, I worked on automated aerodynamic optimisation for a high-lift STOL aircraft configuration.
 
-Airfoil geometries were parameterised using a **12th-order Bernstein polynomial basis**.
+Airfoil geometries were represented using a **12th-order Bernstein polynomial basis**.
 
-A PPO-based optimisation framework explored this design space for high-lift configurations.
+A PPO-based optimisation framework searched this parameter space for high-lift configurations.
 
 ---
 
-## FastFOIL
+# FastFOIL
 
-Part of this work required extending XFOIL to model **Co-Flow Jet active flow control**.
+Part of the project required extending XFOIL to represent **Co-Flow Jet active flow control**.
 
-XFOIL couples:
+XFOIL combines:
 
-1. an inviscid potential-flow solution,
+1. an inviscid potential-flow model,
 2. an integral boundary-layer model,
 3. viscous-inviscid interaction.
 
-Introducing active mass injection and suction therefore requires modifying both the physical model and the numerical coupling.
+Active mass injection and suction therefore require modifications to both the physical model and the numerical coupling.
 
 I implemented:
 
-- line-source terms,
-- line-sink terms,
+- line-source distributions,
+- line-sink distributions,
 - wall-normal transpiration,
-- modified integral boundary-layer momentum equations,
+- modified integral boundary-layer momentum terms,
 - corresponding Newton-Raphson Jacobian terms.
 
-I also identified and corrected a station-indexing issue in the legacy `SETBL` Fortran routine that destabilised mass-flux computations during large parameter sweeps.
+I also identified and corrected a station-indexing issue in the legacy `SETBL` Fortran routine that destabilised mass-flux calculations during extreme parameter sweeps.
 
-The resulting aircraft configuration achieved a reported takeoff lift coefficient of
+The final aircraft configuration achieved a reported takeoff lift coefficient of
 
-\[
+$$
 C_L = 9.49
-\]
+$$
 
 at approximately
 
-\[
+$$
 Re=10^6.
-\]
+$$
+
+---
+
+# Boundary Layers
+
+At sufficiently high Reynolds number, the external flow may be approximately inviscid while a thin region near the wall remains strongly affected by viscosity.
+
+This is the boundary layer.
+
+The characteristic no-slip condition is
+
+$$
+\mathbf{u}_{\mathrm{wall}}=0.
+$$
+
+Velocity therefore changes rapidly between the stationary surface and the outer flow.
+
+This creates strong velocity gradients and wall shear.
+
+Boundary-layer behaviour ultimately determines phenomena including:
+
+- skin-friction drag,
+- separation,
+- stall,
+- wake formation.
 
 ---
 
@@ -137,27 +184,40 @@ Re=10^6.
 
 ## Project DOFT
 
-Hydrofoils operate in water under many of the same aerodynamic principles governing airfoils, but the fluid properties change the relevant transport scales.
+Hydrofoils obey many of the same aerodynamic principles as airfoils, but the different thermophysical properties of water change the relative transport scales.
 
-I conducted 2D CFD simulations of NACA and Eppler hydrofoil sections in ANSYS Fluent using the
+I conducted high-resolution 2D CFD simulations of NACA and Eppler hydrofoil sections using the
 
-\[
-k-\omega\ \text{SST}
-\]
+$$
+k-\omega\ \mathrm{SST}
+$$
 
-turbulence model.
+turbulence model in ANSYS Fluent.
 
-The project investigated boundary-layer separation and whether surface heating could be used as a flow-control mechanism.
+The project investigated boundary-layer separation and whether local surface heating could provide useful boundary-layer control.
 
-Water has a relatively large Prandtl number,
+The Prandtl number is
 
-\[
-Pr\approx7,
-\]
+$$
+Pr
+=
+\frac{\nu}{\alpha},
+$$
 
-meaning momentum and thermal diffusion occur over significantly different scales.
+where:
 
-The analysis showed that thermal transport remained concentrated close to the wall, making surface heating ineffective as a practical mechanism for manipulating the larger hydrodynamic boundary layer in the proposed configuration.
+- $\nu$ is momentum diffusivity,
+- $\alpha$ is thermal diffusivity.
+
+For water,
+
+$$
+Pr\approx7.
+$$
+
+This means thermal and momentum diffusion occur on substantially different scales.
+
+The analysis indicated that thermal effects remained concentrated in a comparatively thin near-wall region, making the proposed heating mechanism ineffective for practical manipulation of the larger hydrodynamic boundary layer.
 
 ---
 
@@ -165,69 +225,113 @@ The analysis showed that thermal transport remained concentrated close to the wa
 
 ## Project PowerKick
 
-Biological swimmers often exploit compliant structures rather than perfectly rigid propulsors.
+Biological swimmers frequently exploit compliant structures rather than perfectly rigid propulsors.
 
-Their deformation interacts with vortex shedding and wake dynamics.
+The deformation of a flexible fin interacts with:
 
-Project PowerKick explored a compliant monofin inspired by cetacean caudal-fin kinematics.
+- vortex shedding,
+- wake structure,
+- thrust production,
+- energy recovery.
 
-I developed a variable-thickness flexural rigidity distribution intended to balance:
+Project PowerKick explored a compliant monofin inspired by cetacean caudal-fin motion.
+
+I developed a variable-thickness flexural-rigidity distribution intended to balance:
 
 - structural flexibility,
-- thrust production,
+- thrust generation,
 - drag,
 - wake interaction.
 
-Coupled fluid-structure simulations in COMSOL were used to investigate how passive deformation affects the thrust-to-drag behaviour.
+Coupled fluid-structure simulations in COMSOL were used to investigate the relationship between passive deformation and hydrodynamic performance.
 
 ---
 
-# Turbulence & Predictability
+# Vorticity
 
-Turbulence remains one of the most interesting examples of a deterministic system with severe practical predictability limits.
+Velocity is not always the most useful quantity for describing rotational flow.
 
-Two initially nearby flow states
+The vorticity field is defined by
 
-\[
-\mathbf u_1(0)
-\quad\text{and}\quad
-\mathbf u_2(0)
-\]
-
-can separate rapidly under nonlinear evolution.
-
-Define
-
-\[
-\delta\mathbf u(t)
+$$
+\boldsymbol{\omega}
 =
-\mathbf u_2(t)-\mathbf u_1(t).
-\]
+\nabla\times\mathbf{u}.
+$$
 
-For sufficiently small perturbations, one may observe approximate finite-time exponential growth,
+Vorticity measures local rotational structure and provides a natural way to analyse:
 
-\[
-\|\delta\mathbf u(t)\|
+- vortices,
+- shear layers,
+- coherent structures,
+- wake dynamics.
+
+In two-dimensional incompressible flow, the vorticity equation can be written schematically as
+
+$$
+\frac{\partial\omega}{\partial t}
++
+\mathbf{u}\cdot\nabla\omega
+=
+\nu\nabla^2\omega.
+$$
+
+This highlights the competition between nonlinear advection and viscous diffusion.
+
+---
+
+# Turbulence and Predictability
+
+Turbulence is a deterministic system with severe practical predictability limits.
+
+Consider two initially nearby velocity fields:
+
+$$
+\mathbf{u}_1(0),
+\qquad
+\mathbf{u}_2(0)
+=
+\mathbf{u}_1(0)
++
+\delta\mathbf{u}(0).
+$$
+
+Define their difference as
+
+$$
+\delta\mathbf{u}(t)
+=
+\mathbf{u}_2(t)
+-
+\mathbf{u}_1(t).
+$$
+
+For sufficiently small perturbations over a limited interval, one may observe approximately
+
+$$
+\|\delta\mathbf{u}(t)\|
 \sim
-\|\delta\mathbf u(0)\|e^{\lambda t}.
-\]
+\|\delta\mathbf{u}(0)\|
+e^{\lambda t},
+$$
 
-But real turbulent systems contain many interacting spatial and temporal scales.
+where $\lambda$ represents a finite-time instability rate.
 
-The important question is not simply whether trajectories diverge.
+The interesting question is not simply whether turbulent trajectories diverge.
 
-It is whether the **present flow field contains structures that indicate how that divergence will occur**.
+It is whether the **present flow structure contains information about how future divergence will occur**.
 
-This connects:
+This connects several areas:
 
 - turbulence,
+- nonlinear dynamics,
 - chaos,
-- reduced-order modelling,
 - coherent structures,
+- reduced-order modelling,
 - spectral analysis,
 - scientific machine learning.
 
-I am currently exploring questions in this area, but detailed methodology will be added only after the work is mature.
+I am currently exploring questions in this area, but detailed methodology will be added only after the work is sufficiently mature.
 
 ---
 
@@ -237,9 +341,9 @@ I am currently exploring questions in this area, but detailed methodology will b
 
 - Finite-element methods
 - CFD
+- Numerical PDEs
 - Spectral analysis
 - Reduced-order modelling
-- Numerical PDEs
 
 ### Simulation
 
@@ -254,12 +358,8 @@ I am currently exploring questions in this area, but detailed methodology will b
 - DMD
 - Fourier analysis
 - instability analysis
-- dimensional reasoning
+- dimensional analysis
 
 ---
 
 [Scientific ML](./scientific-ml) · [Publications](./publications) · [Blog](./blog/)
-
-
----
-
