@@ -1,6 +1,11 @@
+---
+layout: default
+title: Adithya Lakshminarayanan
+---
+
 # Adithya Lakshminarayanan
 
-### Scientific ML · Computational Physics · AI Systems · Control
+### Scientific Machine Learning · Computational Physics · AI Systems · Control
 
 **Engineering Design @ IIT Madras**
 
@@ -16,7 +21,7 @@ My work has ranged from neural operators and transformer interpretability to com
 
 ## [Scientific Machine Learning](./scientific-ml)
 
-How can we learn mappings between physical fields while respecting the mathematical structure of the systems that generated them?
+How can we learn mappings between physical fields while preserving useful mathematical and physical structure?
 
 Topics I am interested in include:
 
@@ -38,14 +43,14 @@ Fluid systems combine relatively compact governing equations with remarkably com
 
 I am interested in:
 
-- turbulence and predictability
-- vortex dynamics
-- boundary layers
-- flow control
-- aerodynamics
-- hydrodynamics
-- electrohydrodynamics
-- computational fluid dynamics
+- turbulence and predictability,
+- vortex dynamics,
+- boundary layers,
+- flow control,
+- aerodynamics,
+- hydrodynamics,
+- electrohydrodynamics,
+- computational fluid dynamics.
 
 My past work includes electroosmotic transport, aerodynamic optimisation, active flow control, hydrofoils, and bio-inspired propulsion.
 
@@ -53,14 +58,14 @@ My past work includes electroosmotic transport, aerodynamic optimisation, active
 
 ## [Mechanistic Interpretability & Reinforcement Learning](./interpretability-rl)
 
-Modern neural networks can perform surprisingly complicated computations without making those computations directly understandable.
+Modern neural networks can perform complicated computations without making those computations directly understandable.
 
 I am interested in identifying:
 
 - where information is represented,
 - how it moves through a model,
 - which pathways causally affect behaviour,
-- and how optimisation changes internal computation.
+- how optimisation changes internal computation.
 
 My work uses causal intervention methods, representation analysis, and reinforcement-learning experiments on small language models.
 
@@ -70,15 +75,15 @@ My work uses causal intervention methods, representation analysis, and reinforce
 
 There is a large gap between a model producing text and an AI system reliably performing engineering work.
 
-I am interested in systems that combine language models with:
+I am interested in systems combining language models with:
 
-- deterministic tools
-- structured execution
-- retrieval
-- geometry
-- simulation
-- high-throughput inference
-- verification
+- deterministic tools,
+- structured execution,
+- retrieval,
+- geometry,
+- simulation,
+- high-throughput inference,
+- verification.
 
 I have worked on both engineering-agent infrastructure and large-scale retrieval systems.
 
@@ -86,17 +91,18 @@ I have worked on both engineering-agent infrastructure and large-scale retrieval
 
 ## [Dynamics, Control & Robotics](./controls-robotics)
 
-Physical systems become especially interesting when sensing, estimation, dynamics, computation, and actuation all interact.
+Physical systems become particularly interesting when sensing, estimation, dynamics, computation, and actuation all interact.
 
 My work has included:
 
-- nonlinear vehicle dynamics
-- model predictive control
-- flight control
-- state estimation
-- processor-in-the-loop simulation
-- embedded real-time systems
-- custom electronics
+- nonlinear vehicle dynamics,
+- model predictive control,
+- flight control,
+- experimental PID tuning,
+- state estimation,
+- processor-in-the-loop simulation,
+- embedded real-time systems,
+- custom electronics.
 
 ---
 
@@ -104,9 +110,9 @@ My work has included:
 
 My formal research includes work in:
 
-- electrokinetic fluid transport
-- physics-informed neural operators
-- vehicle architecture and mobility systems
+- electrokinetic fluid transport,
+- physics-informed neural operators,
+- narrow-track vehicle systems.
 
 [View publications and patents →](./publications)
 
@@ -118,35 +124,36 @@ The blog is where I try to answer questions that initially confused me while stu
 
 Topics include:
 
-- POD vs DMD
-- neural operators
-- turbulence
-- numerical PDEs
-- spectral methods
-- transformer circuits
-- reinforcement learning
-- aerodynamics
-- control theory
+- POD vs DMD,
+- neural operators,
+- turbulence,
+- numerical PDEs,
+- spectral methods,
+- transformer circuits,
+- reinforcement learning,
+- aerodynamics,
+- PID tuning,
+- control theory.
 
 [Read notes →](./blog/)
 
 ---
 
-# Philosophy
+# How I Like to Work
 
 The workflow I enjoy most is roughly
 
-\[
-\text{physical or computational question}
+$$
+\text{Question}
 \rightarrow
-\text{mathematical model}
+\text{Mathematical Model}
 \rightarrow
-\text{numerical experiment}
+\text{Numerical Experiment}
 \rightarrow
-\text{implementation}
+\text{Implementation}
 \rightarrow
-\text{interpretation}.
-\]
+\text{Interpretation}.
+$$
 
 I generally care more about understanding **why a method works and where it fails** than treating it as a black box.
 
@@ -154,12 +161,9 @@ I generally care more about understanding **why a method works and where it fail
 
 # Contact
 
-**Adithya L**  
+**Adithya Lakshminarayanan**  
 Engineering Design, IIT Madras
 
 Email: `ed24b039@smail.iitm.ac.in`
 
 GitHub: [pip-install-adithya](https://github.com/pip-install-adithya)
-
----
-
