@@ -1,30 +1,40 @@
+---
+layout: default
+title: Scientific Machine Learning
+---
+
 [Home](./) · [Fluids](./fluid-dynamics) · [Interpretability](./interpretability-rl) · [AI Systems](./ai-systems) · [Control](./controls-robotics) · [Publications](./publications)
 
 # Scientific Machine Learning
 
-Scientific machine learning sits between **numerical modelling and data-driven learning**.
+Scientific machine learning lies between **numerical modelling and data-driven learning**.
 
-In conventional machine learning, the goal is often to approximate a relationship between finite-dimensional inputs and outputs:
+In conventional machine learning, the goal is often to approximate a finite-dimensional mapping:
 
-\[
+$$
 f:\mathbb{R}^n\rightarrow\mathbb{R}^m.
-\]
+$$
 
 Physical systems are often different.
 
-Their state may be a continuous field
+Their state may instead be a continuous field
 
-\[
+$$
 u(x,t),
-\]
+$$
 
-and the mathematical object we actually care about may be an operator mapping one function to another:
+and the mathematical object of interest may be an operator mapping one function to another:
 
-\[
-\mathcal G:a(x)\mapsto u(x).
-\]
+$$
+\mathcal{G}:a(x)\mapsto u(x).
+$$
 
-This distinction motivates approaches such as **neural operators, physics-informed models, differentiable simulation, and learned reduced-order models**.
+This distinction motivates approaches such as:
+
+- neural operators,
+- physics-informed learning,
+- differentiable simulation,
+- learned reduced-order models.
 
 ---
 
@@ -38,9 +48,9 @@ A physical model may require:
 - very small timesteps,
 - nonlinear iterative solvers,
 - large parameter sweeps,
-- or repeated optimisation.
+- repeated optimisation.
 
-Yet many engineering tasks require solving nearly the same physical problem thousands or millions of times.
+Yet many engineering tasks require solving nearly the same physical problem repeatedly.
 
 Examples include:
 
@@ -50,86 +60,88 @@ Examples include:
 - optimisation,
 - parameter estimation,
 - digital twins,
-- and rapid exploration of design spaces.
+- rapid design-space exploration.
 
-A learned surrogate can potentially approximate some of these expensive mappings much faster.
+A learned surrogate can potentially approximate some of these expensive mappings substantially faster.
 
-The difficult part is ensuring that speed does not come at the cost of destroying the structure of the underlying physics.
+The difficult part is ensuring that speed does not come at the cost of destroying important physical structure.
 
 ---
 
 # Neural Operators
 
-A conventional network learns between vectors.
+A conventional neural network typically learns between finite-dimensional vectors.
 
-A neural operator attempts to learn between **function spaces**:
+A neural operator instead attempts to learn a mapping between **function spaces**:
 
-\[
-\mathcal G_\theta:
-\mathcal A\rightarrow\mathcal U.
-\]
+$$
+\mathcal{G}_\theta:
+\mathcal{A}\rightarrow\mathcal{U}.
+$$
 
-This is particularly natural for PDE systems, because a PDE itself often defines a solution operator.
+This is natural for PDE systems because a differential equation frequently defines a solution operator.
 
 For example,
 
-\[
-a(x)
-\longrightarrow
-u(x)
-\]
+$$
+a(x)\longmapsto u(x)
+$$
 
-may represent the mapping from a spatially varying material property to the solution of a boundary-value problem.
+may represent the mapping from a spatially varying material property to the corresponding solution field.
 
 Neural operators attempt to approximate this mapping directly.
 
 Important families include:
 
-- Fourier Neural Operators
-- Wavelet Neural Operators
-- DeepONets
-- graph-based neural operators
-- geometry-aware operators
+- Fourier Neural Operators,
+- Wavelet Neural Operators,
+- DeepONets,
+- graph neural operators,
+- geometry-aware neural operators.
 
 ---
 
 # Why Fourier Representations?
 
-Many PDEs are naturally connected to spectral representations.
+Many PDE operations have natural spectral representations.
 
-Differentiation, for example, becomes multiplication in Fourier space:
+For example, differentiation becomes multiplication in Fourier space:
 
-\[
+$$
 \frac{\partial u}{\partial x}
 \quad\longleftrightarrow\quad
-ik\hat u(k).
-\]
+ik\hat{u}(k).
+$$
 
-Global spatial interactions can therefore become comparatively simple operations on spectral coefficients.
+Likewise, convolution satisfies
 
-Fourier Neural Operators exploit this structure by learning transformations of selected spectral modes.
+$$
+\mathcal{F}(f*g)
+=
+\mathcal{F}(f)\mathcal{F}(g).
+$$
 
-This makes them attractive for many smooth field problems, but also introduces limitations.
+Fourier Neural Operators exploit this structure by learning transformations of selected Fourier modes.
 
-Fourier bases are global.
+This can make global spatial interactions computationally efficient.
 
-Highly localised structures, discontinuities, complex geometry, and strongly multiscale phenomena may require different representations or hybrid approaches.
+However, Fourier bases are global.
+
+Highly localised phenomena, complex geometries, discontinuities, or strongly multiscale behaviour may require alternative or hybrid representations.
 
 ---
 
 # Physics-Informed Learning
 
-Purely data-driven models rely on examples of the correct output.
+Physical problems provide information beyond input-output examples.
 
-Physical problems often provide an additional source of information:
+A governing equation may be represented abstractly as
 
-\[
-\mathcal N[u]=0,
-\]
+$$
+\mathcal{N}[u]=0.
+$$
 
-where \(\mathcal N\) represents the governing equation.
-
-Physical constraints may enter learning through:
+Physical constraints may therefore enter learning through:
 
 - PDE residuals,
 - conservation laws,
@@ -137,11 +149,11 @@ Physical constraints may enter learning through:
 - differentiable forward models,
 - symmetry,
 - known invariants,
-- geometric structure.
+- geometric constraints.
 
-The interesting question is not simply whether physics can be added to a loss function.
+The interesting question is not merely whether physics can be inserted into a loss function.
 
-It is **which physical information actually improves generalisation and which merely makes optimisation harder**.
+It is which physical constraints genuinely improve generalisation and which instead make optimisation unnecessarily difficult.
 
 ---
 
@@ -149,15 +161,19 @@ It is **which physical information actually improves generalisation and which me
 
 Forward problems ask:
 
-\[
-\text{cause}\rightarrow\text{effect}.
-\]
+$$
+\text{cause}
+\rightarrow
+\text{effect}.
+$$
 
-Inverse problems ask:
+Inverse problems reverse the direction:
 
-\[
-\text{observed effect}\rightarrow\text{unknown cause}.
-\]
+$$
+\text{observed effect}
+\rightarrow
+\text{unknown cause}.
+$$
 
 Examples include estimating:
 
@@ -166,33 +182,120 @@ Examples include estimating:
 - boundary conditions from observations,
 - optical phase from a desired intensity field.
 
-Inverse problems are often difficult because the mapping may be:
+Inverse problems are frequently:
 
 - non-unique,
 - unstable,
 - nonlinear,
 - computationally expensive.
 
-Learning becomes especially useful when the same class of inverse problem must be solved repeatedly.
+Learning becomes particularly attractive when the same family of inverse problems must be solved repeatedly.
 
 ---
 
-# Ongoing Interests
+# Dynamical Systems and Learned Evolution
 
-One area I am currently exploring is learning and prediction in **nonlinear dynamical systems**.
+A dynamical system evolves according to some rule such as
 
-Even when the governing equations are deterministic, nearby initial states can evolve into dramatically different future states.
+$$
+\frac{d\mathbf{x}}{dt}
+=
+f(\mathbf{x},t).
+$$
 
-This creates fundamental questions:
+A learned evolution operator instead attempts to approximate mappings such as
 
-- Which structures indicate future instability?
-- How much information about future divergence exists in the present state?
-- When does a reduced representation discard information that matters for predictability?
-- Which spatial or spectral scales control finite-time evolution?
+$$
+\mathcal{G}_{\Delta t}:
+u(\mathbf{x},t)
+\mapsto
+u(\mathbf{x},t+\Delta t).
+$$
 
-These questions are particularly interesting in turbulent fluid systems.
+Repeated application then produces
 
-I am currently investigating this direction, but will add detailed methodology and results here only once the work is sufficiently mature.
+$$
+u_t
+\rightarrow
+u_{t+\Delta t}
+\rightarrow
+u_{t+2\Delta t}
+\rightarrow
+\cdots.
+$$
+
+This provides one route toward fast surrogate models for systems whose numerical evolution is otherwise expensive.
+
+---
+
+# Reduced-Order Modelling
+
+High-dimensional physical fields often contain considerable redundancy.
+
+Instead of evolving the complete state, one can seek a lower-dimensional representation:
+
+$$
+u(\mathbf{x},t)
+\approx
+\sum_{i=1}^{r}
+a_i(t)\phi_i(\mathbf{x}),
+$$
+
+where:
+
+- $\phi_i$ are spatial basis functions,
+- $a_i(t)$ are time-dependent coefficients,
+- $r$ is much smaller than the original state dimension.
+
+Techniques such as **Proper Orthogonal Decomposition** and **Dynamic Mode Decomposition** provide different ways of identifying useful low-dimensional structure.
+
+The key question is whether the reduced coordinates preserve the information required for the downstream task.
+
+---
+
+# Turbulence and Predictability
+
+One area I am currently interested in is learning and prediction in strongly nonlinear dynamical systems.
+
+Suppose two initially nearby states satisfy
+
+$$
+\mathbf{u}_2(0)
+=
+\mathbf{u}_1(0)
++
+\delta\mathbf{u}(0).
+$$
+
+Their separation at a later time is
+
+$$
+\delta\mathbf{u}(t)
+=
+\mathbf{u}_2(t)
+-
+\mathbf{u}_1(t).
+$$
+
+In a chaotic regime, sufficiently small perturbations may initially exhibit approximate exponential growth:
+
+$$
+\|\delta\mathbf{u}(t)\|
+\sim
+\|\delta\mathbf{u}(0)\|
+e^{\lambda t},
+$$
+
+where $\lambda$ characterises finite-time instability.
+
+The important questions are deeper than simply observing that trajectories diverge:
+
+- Which present structures indicate future instability?
+- Which scales dominate perturbation growth?
+- Can a reduced representation preserve predictability information?
+- How long does useful forecast information survive?
+
+I am currently exploring this area, but detailed methodology will be added only once the work is sufficiently mature.
 
 ---
 
@@ -200,51 +303,40 @@ I am currently investigating this direction, but will add detailed methodology a
 
 I am also involved in ongoing work applying **neural operators to inverse problems in optical trapping**.
 
-The broader problem is to efficiently determine optical control fields capable of producing desired trapping potentials.
+The broader problem is to determine optical control fields capable of producing desired trapping potentials.
 
-Conventional iterative optimisation can be computationally expensive when such inverse problems must be solved repeatedly.
+When such inverse problems must be solved repeatedly, iterative numerical optimisation can become computationally expensive.
 
-Neural operators provide one possible framework for learning mappings directly between continuous physical fields.
+Neural operators provide one framework for learning mappings directly between continuous physical fields.
 
-The work is currently **under review**, so implementation details and results are intentionally not described here.
+The work is currently **under review**, so detailed architecture, methodology, and experimental results are intentionally omitted here.
 
 ---
 
 # Topics I Am Interested In
 
-```text
-Scientific Machine Learning
-├── Neural Operators
-│   ├── Fourier
-│   ├── Wavelet
-│   └── Geometry-aware methods
-│
-├── Physics-Informed Learning
-│   ├── Differentiable physics
-│   ├── Conservation constraints
-│   └── PDE structure
-│
-├── Dynamical Systems
-│   ├── Predictability
-│   ├── Reduced-order models
-│   └── Learned evolution operators
-│
-└── Inverse Problems
-    ├── Field reconstruction
-    ├── Parameter inference
-    └── Physics-constrained optimisation
-```
+### Scientific Machine Learning
+
+- Neural operators
+- Physics-informed learning
+- Differentiable simulation
+- Operator learning
+- Inverse problems
+
+### Dynamical Systems
+
+- Predictability
+- Reduced-order modelling
+- Learned evolution operators
+- Instability
+
+### Representations
+
+- Fourier methods
+- Wavelets
+- Spectral decompositions
+- Geometry-aware methods
 
 ---
 
-## Related Notes
-
-- Fourier Neural Operators from the Ground Up
-- POD vs DMD
-- Predictability in Turbulent Systems
-- Spectral Methods for PDEs
-
-[Blog →](./blog/)
-
-
----
+[Home](./) · [Fluids](./fluid-dynamics) · [Blog](./blog/)
