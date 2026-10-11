@@ -18,7 +18,7 @@ We may want it to:
 - respect actuator limits,
 - and remain robust to modelling errors.
 
-A typical feedback system can be viewed as
+A feedback-controlled physical system can be viewed broadly as
 
 $$
 \text{Sensing}
@@ -40,30 +40,28 @@ My work in this area has primarily involved **vehicle dynamics, nonlinear contro
 
 ## Project Agilit-E
 
-Narrow-track vehicles offer an interesting mobility problem.
+Narrow-track vehicles provide an interesting vehicle-dynamics problem.
 
-Reducing vehicle width can improve manoeuvrability and road-space utilisation, but it also reduces the lateral distance between the tyre contact patches.
+Reducing vehicle width can improve manoeuvrability and road-space utilisation, but it also reduces the lateral spacing between tyre contact patches and therefore reduces passive resistance to rollover.
 
-During cornering, lateral acceleration generates an overturning moment about the outer wheels.
+During cornering, lateral acceleration generates an overturning moment.
 
-A conventional wide vehicle primarily resists this through its track width. A sufficiently narrow vehicle instead benefits from **leaning into the turn**, similar to a motorcycle.
+Rather than relying entirely on track width to resist this moment, a narrow-track vehicle can lean into a corner similarly to a motorcycle.
 
-This introduces an additional controlled degree of freedom: **vehicle roll**.
+This introduces another controlled degree of freedom: **vehicle roll**.
 
 ---
 
-## Modelling the Vehicle
+## Nonlinear Vehicle Modelling
 
-A controller can only be as useful as the dynamic model on which its decisions are based.
+For Project Agilit-E, I developed a **four-degree-of-freedom nonlinear state-space model** coupling:
 
-For Project Agilit-E, I derived a **four-degree-of-freedom nonlinear state-space model** capturing interactions between:
-
-- yaw motion,
-- roll motion,
-- vertical dynamics,
+- yaw dynamics,
+- roll dynamics,
+- vertical motion,
 - lateral tyre behaviour.
 
-A generic nonlinear dynamical system can be represented as
+A general nonlinear state-space system may be represented as
 
 $$
 \dot{\mathbf{x}}
@@ -73,42 +71,41 @@ $$
 
 where:
 
-- $\mathbf{x}$ contains the system states,
-- $\mathbf{u}$ contains control inputs,
-- $f$ describes the nonlinear vehicle dynamics.
+- $\mathbf{x}$ represents the dynamic state,
+- $\mathbf{u}$ represents the control input,
+- $f$ represents the nonlinear vehicle dynamics.
 
-The model also incorporates a three-tyre force representation and the kinematic constraints introduced by the reverse-trike architecture.
+The model also incorporates a three-tyre force representation and the kinematic constraints associated with the reverse-trike architecture.
 
-This becomes important at large lean angles and aggressive manoeuvres, where simple small-angle linearised models are no longer sufficient.
+A nonlinear representation becomes particularly important at large tilt angles and aggressive manoeuvres, where small-angle linearisation becomes increasingly inaccurate.
 
 ---
 
-# Tilt Control
+# Vehicle Tilt Control
 
-For a steady turn, an intuitive equilibrium lean relationship can be obtained by balancing gravitational and lateral effects:
+For an ideal steady turn, the equilibrium lean angle can be understood from the balance between gravity and lateral acceleration:
 
 $$
-\tan\phi
+\tan \phi
 =
 \frac{a_y}{g},
 $$
 
 where:
 
-- $\phi$ is the desired lean angle,
+- $\phi$ is the lean angle,
 - $a_y$ is lateral acceleration,
 - $g$ is gravitational acceleration.
 
-Real vehicle control is substantially more complicated.
+A real vehicle must additionally handle:
 
-The system must account for:
-
-- transient manoeuvres,
+- transient steering,
+- varying speed,
 - actuator dynamics,
-- torque limits,
-- steering behaviour,
-- state-estimation error,
-- model uncertainty.
+- torque saturation,
+- state-estimation errors,
+- disturbances,
+- modelling uncertainty.
 
 I developed a **Steer Direct Tilt Control architecture** combining:
 
@@ -117,64 +114,71 @@ I developed a **Steer Direct Tilt Control architecture** combining:
 
 ---
 
-# Model Predictive Control
+## Model Predictive Control
 
-Model Predictive Control repeatedly predicts the future behaviour of a system over a finite horizon.
+Model Predictive Control repeatedly predicts future system behaviour over a finite horizon and chooses control actions by solving an optimisation problem.
 
-Conceptually, the controller solves
+A representative objective is
 
 $$
 \min_{\mathbf{u}_{0:N-1}}
 \sum_{k=0}^{N-1}
-\left(
-\|\mathbf{x}_k-\mathbf{x}_{\mathrm{ref}}\|_Q^2
+\left[
+(\mathbf{x}_k-\mathbf{x}_{\mathrm{ref}})^T
+Q
+(\mathbf{x}_k-\mathbf{x}_{\mathrm{ref}})
 +
-\|\mathbf{u}_k\|_R^2
-\right),
+\mathbf{u}_k^T R \mathbf{u}_k
+\right].
 $$
 
-subject to the system dynamics and physical constraints.
+The optimisation is subject to:
 
-Only the first control action is applied.
+- system dynamics,
+- actuator limits,
+- state constraints,
+- physical operating limits.
+
+Only the first computed control action is applied.
 
 The optimisation is then solved again using the latest state estimate.
 
-This makes MPC particularly attractive when actuator constraints and nonlinear behaviour matter explicitly.
+This receding-horizon structure allows future behaviour and actuator constraints to enter the control decision explicitly.
 
 ---
 
 # Processor-in-the-Loop Validation
 
-Testing an unstable or highly dynamic controller directly on a physical vehicle is risky.
+Testing aggressive control behaviour directly on a vehicle introduces unnecessary risk.
 
 I therefore developed a **Processor-in-the-Loop simulation environment** using MATLAB/Simulink.
 
-The vehicle remains simulated while the actual embedded processor executes the control algorithm.
+The vehicle dynamics remain simulated while the actual embedded processor executes the controller.
 
 This allows evaluation of:
 
 - controller timing,
 - numerical precision,
 - communication delays,
+- control logic,
 - actuator demands,
 - embedded implementation,
-- failure cases,
 
-before full physical deployment.
+before unrestricted physical testing.
 
 ---
 
 # State Estimation
 
-Many states needed by a controller cannot be measured directly.
+Not every state required by a controller can be measured directly.
 
-For vehicle roll estimation, I developed a sensor-fusion pipeline using a six-axis IMU.
+For roll estimation, I developed a sensor-fusion pipeline using a six-axis IMU.
 
-Gyroscopes measure angular velocity accurately over short periods but accumulate bias when integrated.
+Gyroscopes measure angular velocity accurately over short intervals but accumulate bias after integration.
 
-Accelerometers provide a long-term gravity reference but are corrupted by translational acceleration.
+Accelerometers provide an absolute gravity reference over long timescales but become unreliable under translational acceleration.
 
-A complementary filter combines both:
+A complementary filter combines these behaviours:
 
 $$
 \hat{\phi}_k
@@ -191,43 +195,39 @@ $$
 
 where:
 
-- $\omega_k$ is measured angular velocity,
-- $\phi_{\mathrm{acc}}$ is the accelerometer-based estimate,
-- $\alpha$ determines the relative weighting.
+- $\omega_k$ is gyroscope angular velocity,
+- $\phi_{\mathrm{acc}}$ is the accelerometer-derived orientation estimate,
+- $\alpha$ controls the relative weighting.
 
-The basic idea is simple:
+Conceptually:
 
-**trust the gyroscope at high frequency and the accelerometer at low frequency.**
+> trust the gyroscope over short timescales and the accelerometer over long timescales.
 
 ---
 
 # Distributed Embedded Architecture
 
-The vehicle uses multiple ESP32 controllers rather than relying on one central microcontroller for every task.
+The vehicle electronics use multiple ESP32 controllers rather than placing every sensing and control task on a single processor.
 
-Communication between nodes uses **ESP-NOW**, allowing low-latency peer-to-peer data exchange.
+Communication uses **ESP-NOW** for low-latency peer-to-peer exchange between distributed nodes.
 
-The architecture supports distributed:
+The architecture supports:
 
 - sensing,
-- control,
+- state communication,
+- controller execution,
 - actuator commands,
 - telemetry.
 
-I also developed a telemetry pipeline using:
-
-- MQTT,
-- Grafana,
-
-for real-time monitoring of dynamic states and controller behaviour.
+I also developed an MQTT-based telemetry pipeline connected to Grafana for real-time monitoring of vehicle states and controller behaviour.
 
 ---
 
 # Mechanically Decoupled Tilting Architecture
 
-Control is only one part of the vehicle-stability problem.
+Control alone does not solve the vehicle-stability problem.
 
-The suspension geometry must also permit the chassis to lean without introducing undesirable suspension motion or steering interference.
+The suspension geometry must allow the chassis to tilt while avoiding undesirable coupling with vertical suspension motion and steering.
 
 I developed a mechanically decoupled architecture based on:
 
@@ -236,19 +236,19 @@ I developed a mechanically decoupled architecture based on:
 - independent chassis tilt,
 - multi-degree-of-freedom steering articulation.
 
-The objective is to separate:
+The objective is to distinguish
 
-**vertical wheel motion caused by road disturbances**
+**vertical suspension displacement caused by road irregularities**
 
 from
 
-**chassis roll used for vehicle balancing.**
+**chassis roll used to balance the vehicle.**
 
-A multi-DOF steering knuckle was designed to avoid kinematic binding during simultaneous large steering and tilt motions.
+A multi-DOF steering knuckle was developed to avoid kinematic binding during simultaneous large steering and tilt motions.
 
-Dynamic behaviour was studied in Simulink and structural components were evaluated using finite-element analysis.
+Dynamic behaviour was studied in MATLAB/Simulink and structural components were evaluated using finite-element analysis.
 
-An **Indian patent application has been filed** for the architecture.
+An **Indian patent application has been filed** for this architecture.
 
 ---
 
@@ -256,19 +256,19 @@ An **Indian patent application has been filed** for the architecture.
 
 ## Project Tessera
 
-Multirotor vehicles present another control problem.
+Multirotor flight provides a different control problem.
 
-Unlike a conventional aircraft, a multirotor generally has little passive attitude stability.
+A multirotor has little passive attitude stability and therefore depends continuously on feedback.
 
-Its controller must continuously:
+The flight controller repeatedly:
 
-1. measure motion,
-2. estimate attitude,
-3. determine attitude error,
-4. compute corrective moments,
-5. modify motor thrust.
+1. measures vehicle motion,
+2. estimates attitude,
+3. computes attitude error,
+4. determines corrective moments,
+5. modifies individual motor thrust.
 
-This entire loop must execute much faster than the characteristic dynamics of the vehicle.
+The complete feedback loop must execute substantially faster than the dominant vehicle dynamics.
 
 ---
 
@@ -279,19 +279,19 @@ I developed modular flight-control firmware in **C/C++ on an ESP32-WROOM-32** us
 Separate real-time tasks handled:
 
 - sensor acquisition,
-- control computation,
-- telemetry,
-- communication.
+- controller execution,
+- communication,
+- telemetry.
 
-Sensor acquisition operated at approximately **100 Hz**, while the cascaded controller operated at up to **200 Hz**.
+Sensor acquisition operated at approximately **100 Hz**, while the cascaded attitude and rate controller operated at up to **200 Hz**.
 
 ---
 
-# Cascaded PID Control
+# Cascaded PID Flight Control
 
-Rather than directly converting attitude error into motor commands, the controller uses two feedback loops.
+The controller separates attitude regulation from angular-rate regulation.
 
-The outer loop regulates attitude:
+For one rotational axis, the outer loop computes an attitude error
 
 $$
 e_\theta
@@ -301,9 +301,9 @@ e_\theta
 \theta_{\mathrm{measured}}.
 $$
 
-Its output becomes a desired angular rate.
+Its output specifies a desired angular velocity.
 
-The inner loop then regulates angular velocity:
+The inner loop then computes
 
 $$
 e_\omega
@@ -313,42 +313,241 @@ e_\omega
 \omega_{\mathrm{measured}}.
 $$
 
-A PID controller uses
+A conventional PID controller has the form
 
 $$
 u(t)
 =
 K_P e(t)
 +
-K_I\int e(t)\,dt
+K_I
+\int_0^t e(\tau)\,d\tau
 +
-K_D\frac{de(t)}{dt}.
+K_D
+\frac{de(t)}{dt}.
 $$
 
-This cascaded structure allows the faster rotational-rate dynamics to be controlled separately from the slower attitude dynamics.
+The three terms serve different roles:
+
+- $K_P$ responds to present error,
+- $K_I$ removes persistent steady-state error,
+- $K_D$ reacts to the rate at which error changes.
 
 I also implemented:
 
-- integrator anti-windup,
+- anti-windup handling,
 - dynamic gyro notch filtering.
 
 ---
 
-# Empirical Controller Tuning
+# Experimental PID Tuning on a 3-DOF Testbed
 
-Manual PID tuning becomes difficult when the real system differs significantly from the simulated model.
+A controller tuned entirely from simulation may perform poorly once applied to physical hardware.
 
-I therefore developed an automated empirical tuning module based on modified **Ziegler-Nichols relay oscillation**.
+Real systems introduce effects that are difficult to model precisely:
 
-A controlled oscillation is induced on the physical test rig.
+- motor response delay,
+- propeller aerodynamics,
+- structural flexibility,
+- sensor noise,
+- friction,
+- centre-of-mass offsets,
+- actuator saturation.
 
-The resulting response provides information about:
+For this reason, I developed a physical **3-DOF gimbal testbed** for experimental controller tuning and validation.
 
-- system gain,
-- characteristic period,
-- stability margin,
+The testbed permits the flight stack to rotate in roll, pitch, and yaw while preventing translational motion.
 
-from which initial controller gains can be estimated automatically.
+This allows unstable controller settings to be investigated without risking unrestricted flight.
+
+---
+
+## Ziegler–Nichols Closed-Loop Method
+
+For an initial set of vanilla PID gains, I used the classical **Ziegler–Nichols ultimate-gain approach**.
+
+For a selected axis, the integral and derivative terms are first removed:
+
+$$
+K_I = 0,
+\qquad
+K_D = 0.
+$$
+
+The controller therefore becomes purely proportional:
+
+$$
+u(t)
+=
+K_P e(t).
+$$
+
+The proportional gain is then increased gradually.
+
+At low gain, a displaced vehicle returns slowly toward the desired orientation.
+
+As $K_P$ increases, the response becomes faster but progressively more oscillatory.
+
+Eventually a gain is reached where the system exhibits approximately **sustained oscillation**: the oscillation neither grows significantly nor decays significantly.
+
+That proportional gain is defined as the **ultimate gain**
+
+$$
+K_u.
+$$
+
+The corresponding oscillation period is measured as the **ultimate period**
+
+$$
+T_u.
+$$
+
+---
+
+## Classical PID Initialization
+
+For a conventional PID controller, the classical Ziegler–Nichols rules give
+
+$$
+K_P
+=
+0.6K_u,
+$$
+
+$$
+T_I
+=
+\frac{T_u}{2},
+$$
+
+and
+
+$$
+T_D
+=
+\frac{T_u}{8}.
+$$
+
+If the implementation uses gains $K_P$, $K_I$, and $K_D$ directly rather than integral and derivative time constants, then
+
+$$
+K_I
+=
+\frac{K_P}{T_I}
+=
+\frac{1.2K_u}{T_u},
+$$
+
+and
+
+$$
+K_D
+=
+K_P T_D
+=
+0.075K_uT_u.
+$$
+
+Therefore the classical initial tuning can be written directly as
+
+$$
+\boxed{
+K_P = 0.6K_u,
+\qquad
+K_I = \frac{1.2K_u}{T_u},
+\qquad
+K_D = 0.075K_uT_u
+}
+$$
+
+These values are not treated as the final controller.
+
+They provide a physically measured **starting point** for subsequent refinement.
+
+---
+
+## Applying the Method to a 3-DOF Platform
+
+A multirotor testbed is not three independent SISO systems.
+
+Roll, pitch, and yaw are coupled through:
+
+- rigid-body dynamics,
+- motor thrust,
+- frame inertia,
+- centre-of-mass location.
+
+The practical tuning procedure therefore begins approximately axis-by-axis.
+
+For each rotational axis:
+
+1. Begin from safe, low proportional gain.
+2. Disable integral and derivative action.
+3. Apply a small attitude disturbance or command.
+4. Increase $K_P$ incrementally.
+5. Observe the transient response.
+6. Identify the gain $K_u$ producing sustained oscillation.
+7. Measure the oscillation period $T_u$.
+8. Compute initial Ziegler–Nichols PID gains.
+9. Repeat for the other axes.
+10. Re-enable simultaneous three-axis motion and validate the coupled system.
+
+The 3-DOF testbed is particularly useful at the final stage because gains that appear satisfactory on an isolated axis may excite another rotational mode once the complete rigid body is allowed to move.
+
+---
+
+## Why Ziegler–Nichols Is Only an Initial Estimate
+
+Classical Ziegler–Nichols tuning is intentionally aggressive.
+
+Its objective is not to produce the smoothest possible response.
+
+A typical Ziegler–Nichols-tuned system may exhibit:
+
+- noticeable overshoot,
+- oscillatory settling,
+- excessive derivative sensitivity,
+- aggressive actuator commands.
+
+For a flight controller, the experimental gains therefore require additional refinement.
+
+In practice:
+
+- excessive overshoot suggests reducing $K_P$,
+- slow removal of persistent error suggests increasing $K_I$,
+- excessive oscillation can often be reduced by increasing damping through $K_D$,
+- noisy derivative response may require derivative filtering,
+- actuator saturation may require reducing overall gain or adding anti-windup protection.
+
+The physical testbed therefore turns the process into
+
+$$
+\text{Ziegler--Nichols estimate}
+\rightarrow
+\text{experimental response}
+\rightarrow
+\text{manual refinement}
+\rightarrow
+\text{coupled validation}.
+$$
+
+---
+
+## Why Use a 3-DOF Testbed?
+
+A one-axis rig is useful for identifying basic controller behaviour.
+
+A three-axis rig additionally exposes:
+
+- cross-axis coupling,
+- inertial asymmetry,
+- centre-of-mass errors,
+- motor-mixing interactions,
+- sensor-axis alignment errors.
+
+It therefore bridges the gap between an idealised single-axis experiment and unrestricted flight.
+
+This was particularly useful for validating the controller before transitioning from constrained laboratory testing to a complete multirotor platform.
 
 ---
 
@@ -362,34 +561,36 @@ I also designed and routed a **four-layer flight-stack PCB** containing:
 - I²C interfaces,
 - SPI interfaces,
 - ESC connections,
-- onboard power distribution.
+- power distribution.
 
-PCB design becomes especially important in flight-control hardware because low-level sensor measurements coexist with rapidly switching, high-current motor electronics.
-
-Attention must therefore be given to:
+Flight-control electronics require particular attention to:
 
 - grounding,
 - signal integrity,
 - power distribution,
-- noise isolation.
+- electrical noise,
+- high-current switching.
+
+Low-level inertial measurements must coexist with rapidly switching motor electronics without allowing noise to dominate the state estimate.
 
 ---
 
-# Physical Test Rigs
+# Physical Test Infrastructure
 
-Before allowing unrestricted flight, I developed:
+I developed both:
 
-- one-degree-of-freedom rigs,
-- three-degree-of-freedom gimbal rigs.
+- 1-DOF test rigs,
+- 3-DOF gimbal rigs,
 
-These were used for:
+for:
 
+- controller tuning,
 - system identification,
-- thrust-curve characterisation,
-- isolated-axis controller testing,
-- empirical tuning.
+- thrust characterisation,
+- isolated-axis validation,
+- coupled attitude-control testing.
 
-Constrained test rigs allow instability and controller failure to be studied without immediately losing the vehicle.
+Constrained testbeds make it possible to intentionally explore unstable controller configurations while substantially reducing the consequences of failure.
 
 ---
 
@@ -403,13 +604,17 @@ A successful controller may require understanding:
 - optimisation,
 - numerical methods,
 - sensing,
-- filtering,
+- state estimation,
 - embedded computation,
 - electronics,
 - mechanical design.
 
-The most interesting systems are usually those where none of these can be considered independently.
+The most interesting systems are usually those where none of these can be treated independently.
 
 ---
 
-[Home](./) · [Fluids](./fluid-dynamics) · [Publications](./publications)
+## Related Writing
+
+A longer note on the experimental tuning procedure, oscillation measurements, final gain refinement, and limitations of classical Ziegler–Nichols tuning will be available in the blog.
+
+[Home](./) · [Fluids](./fluid-dynamics) · [Publications](./publications) · [Notes](./blog/)
