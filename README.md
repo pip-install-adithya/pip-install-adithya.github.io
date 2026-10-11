@@ -1,71 +1,43 @@
 # pip-install-adithya.github.io
 
-Personal portfolio and technical blog of **Adithya L**, an Engineering Design undergraduate at **IIT Madras** working across **Scientific Machine Learning, Computational Physics, AI Systems, Fluid Dynamics, Controls, and Mechanistic Interpretability**.
+Personal website and technical notebook of **Adithya L**, an Engineering Design undergraduate at **IIT Madras**.
 
-🌐 **Website:** https://pip-install-adithya.github.io
+My work sits broadly at the intersection of:
 
-## About the Site
-
-This website is a home for my research, engineering projects, technical notes, and experiments.
-
-I am particularly interested in problems at the intersection of:
-
-- Scientific Machine Learning & Neural Operators
-- Computational Fluid Dynamics
+- Scientific Machine Learning
+- Fluid Dynamics & Computational Physics
+- Mechanistic Interpretability & Reinforcement Learning
+- AI Systems
 - Dynamical Systems & Control
-- Mechanistic Interpretability
-- LLM Systems & Reinforcement Learning
-- Numerical Methods & Scientific Computing
 - Robotics & Embedded Systems
+- Numerical Scientific Computing
 
-## Selected Work
+🌐 **Website:** https://pip-install-adithya.github.io  
+💻 **GitHub:** https://github.com/pip-install-adithya
 
-### Research
-- **HoloFNO** — Physics-informed Fourier Neural Operators for optical trapping of neutral atoms
-- **Decoupled Capacitive-Gate Electroosmosis** — Published in the *Journal of Applied Physics*
-- **Mechanistic Interpretability of Small Language Models** — Causal circuit localization, activation/path patching, EAP, DLA and representation analysis
-
-### Engineering
-- **DaVinci** — Agentic CAD topology analysis and automated FEA orchestration
-- **Project Agilit-E** — Nonlinear modelling and active tilt control for a narrow-track vehicle
-- **FastFOIL / Inter-IIT** — Modified XFOIL and RL-based aerodynamic optimisation
-- **Project Tessera** — Real-time embedded flight-control hardware and firmware
-- **Project Deep Recall** — Hybrid retrieval and locally hosted RAG for historical archives
-
-## Blog
-
-I use the blog to document things I am learning and building, particularly:
-
-- turbulence and nonlinear dynamics
-- POD, DMD and reduced-order modelling
-- neural operators
-- numerical PDEs
-- mechanistic interpretability
-- reinforcement learning
-- control systems
-- CFD and aerodynamics
-- interesting implementation details from research projects
-
-## Tech
-
-`Python` · `PyTorch` · `NumPy` · `SciPy` · `C/C++` · `Fortran` · `MATLAB` · `CUDA` · `Docker` · `COMSOL` · `ANSYS Fluent` · `XFOIL` · `Gmsh` · `CalculiX` · `OpenCASCADE` · `TransformerLens`
-
-## Repository Structure
+## Structure
 
 ```text
 .
-├── index.md              # Home
-├── projects.md           # Research & engineering projects
-├── research.md           # Publications and research
-├── about.md              # About me
-├── blog/
-│   └── ...
-├── assets/
-│   ├── images/
-│   └── files/
-└── _config.yml
+├── index.md
+├── about.md
+├── publications.md
+│
+├── scientific-ml.md
+├── interpretability-rl.md
+├── fluid-dynamics.md
+├── ai-systems.md
+├── controls-robotics.md
+│
+└── blog/
+    └── index.md
 ```
+
+The website is organised by **technical area rather than individual projects**.
+
+Each section introduces the underlying problem space, explains why it is interesting, and then collects the research or engineering work I have done within it.
+
+The blog is where I write longer explanations of mathematical, physical, and computational ideas that I encounter while working on these problems.
 
 ---
 
-Built as an evolving record of the things I research, build, break, and eventually understand.
